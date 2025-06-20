@@ -9,20 +9,20 @@ end
 if ExtencionList.ForeverHD.CheckGame and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HDAdminInterface") then
 PrefixY = ";"
 game:GetService("StarterGui"):SetCore("SendNotification",{
-    Title = "Super Hacker YT";
+    Title = "SuperHacker & Juanko";
     Text = "Loading Verzion ForeverHD NEW";
     Duration = 10;
 })
 elseif ExtencionList.ForeverHD.CheckGame and game:GetService("CoreGui"):FindFirstChild("TopBarApp") and game:GetService("CoreGui").TopBarApp:FindFirstChild("TopBarApp") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HDAdminGUIs") then
 PrefixY = ":"
 game:GetService("StarterGui"):SetCore("SendNotification",{
-    Title = "Super Hacker YT";
+    Title = "SuperHacker & Juanko";
     Text = "Loading Verzion ForeverHD OLD";
     Duration = 10;
 })
 elseif ExtencionList.ForeverHD.CheckGame then
 game:GetService("StarterGui"):SetCore("SendNotification",{
-    Title = "Super Hacker YT";
+    Title = "SuperHacke & Juanko";
     Text = "Game Not Support ForeverHD";
     Duration = 10;
 })
@@ -83,7 +83,7 @@ end
 local DiscordLib = loadstring(game:HttpGet("https://pastebin.com/raw/KRf0xDXQ"))()
 NameTextTitleXP = "Default"
 if ExtencionList.ScriptMode.NameTitle == "OriginalText" then
-NameTextTitleXP = "ADMIN Abuse GUI | Super Hacker (Elvis) | "..identifyexecutor()..""
+NameTextTitleXP = "ADMIN Abuse GUI | SuperHacker & Juanko | "..identifyexecutor()..""
 else
 NameTextTitleXP = ExtencionList.ScriptMode.NameTitle
 end
