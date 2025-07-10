@@ -123,8 +123,8 @@ end)
 		{"Yeet Players GUI", function()
 			loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Yeet-Script-4394"))()
 		end},
-		{"Explode Punch (Only Anim FE)", function()
-			loadstring(game:HttpGet("https://pastebin.com/raw/ghDgM2ce"))()
+		{"Super Punch", function()
+			loadstring(game:HttpGet("https://pastefy.app/GvnHVjT5/raw"))()
 		end},
 		{"Nuke Fist (Only Anim FE)", function()
 			loadstring(game:HttpGet("https://pastebin.com/raw/nk7XigMp"))()
@@ -326,7 +326,7 @@ end)
 		{"Click Destroy", function()
 			loadstring(game:HttpGet("https://pastebin.com/raw/yeEqi8js"))()
 		end},
-		{"Title Changer (Visual)", function()
+		{"Title Changer", function()
 			loadstring(game:HttpGet("https://pastebin.com/raw/u10D8KDn"))()
 		end},
 	},
