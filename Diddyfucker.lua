@@ -1,7 +1,7 @@
 -- if you skidd this script you're a underdevelopment kid
 -- skiddgui, TEAM ELV8SF0F0!
--- Subscribe to Super Hacker (Elvis)
--- My Roblox Username is SuperHacke_YT
+-- Subscribe to Elvis Gaming on YouTube!
+-- My Roblox Username is SuperHacke_YT (still in old name)
 -- Enjoy
 
 local screenGui = Instance.new("ScreenGui")
