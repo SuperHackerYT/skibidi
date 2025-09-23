@@ -195,7 +195,7 @@ local function CheckIfBad(Inst)
 end
 if _G.SendNotifications then
     StarterGui:SetCore("SendNotification", {
-        Title = "Axiora Hub",
+        Title = "Spolarium Hub",
         Text = "Loading FPS Booster...",
         Duration = math.huge,
         Button1 = "Okay"
@@ -218,7 +218,7 @@ coroutine.wrap(pcall)(function()
             sethiddenproperty(terrain, "Decoration", false)
         else
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "Your exploit does not support sethiddenproperty, please use a different exploit.",
                 Duration = 5,
                 Button1 = "Okay"
@@ -227,7 +227,7 @@ coroutine.wrap(pcall)(function()
         end
         if _G.SendNotifications then
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "Low Water Graphics Enabled",
                 Duration = 5,
                 Button1 = "Okay"
@@ -247,7 +247,7 @@ coroutine.wrap(pcall)(function()
             sethiddenproperty(Lighting, "Technology", 2)
         else
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "Your exploit does not support sethiddenproperty, please use a different exploit.",
                 Duration = 5,
                 Button1 = "Okay"
@@ -256,7 +256,7 @@ coroutine.wrap(pcall)(function()
         end
         if _G.SendNotifications then
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "No Shadows Enabled",
                 Duration = 5,
                 Button1 = "Okay"
@@ -273,7 +273,7 @@ coroutine.wrap(pcall)(function()
         settings().Rendering.MeshPartDetailLevel = Enum.MeshPartDetailLevel.Level04
         if _G.SendNotifications then
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "Low Rendering Enabled",
                 Duration = 5,
                 Button1 = "Okay"
@@ -292,7 +292,7 @@ coroutine.wrap(pcall)(function()
         MaterialService.Use2022Materials = false
         if _G.SendNotifications then
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "Reset Materials Enabled",
                 Duration = 5,
                 Button1 = "Okay"
@@ -310,7 +310,7 @@ coroutine.wrap(pcall)(function()
                 setfpscap(tonumber(_G.Settings["FPS Cap"] or (_G.Settings.Other and _G.Settings.Other["FPS Cap"])))
                 if _G.SendNotifications then
                     StarterGui:SetCore("SendNotification", {
-                        Title = "discord.gg/rips",
+                        Title = "FPS CAP",
                         Text = "FPS Capped to " .. tostring(_G.Settings["FPS Cap"] or (_G.Settings.Other and _G.Settings.Other["FPS Cap"])),
                         Duration = 5,
                         Button1 = "Okay"
@@ -323,7 +323,7 @@ coroutine.wrap(pcall)(function()
                 setfpscap(1e6)
                 if _G.SendNotifications then
                     StarterGui:SetCore("SendNotification", {
-                        Title = "Axiora Hub",
+                        Title = "Spolarium Hub",
                         Text = "FPS Uncapped",
                         Duration = 5,
                         Button1 = "Okay"
@@ -335,7 +335,7 @@ coroutine.wrap(pcall)(function()
             end
         else
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "FPS Cap Failed",
                 Duration = math.huge,
                 Button1 = "Okay"
@@ -352,7 +352,7 @@ coroutine.wrap(pcall)(function()
             end
             if _G.SendNotifications then
                 StarterGui:SetCore("SendNotification", {
-                    Title = "Axiora Hub",
+                    Title = "Spolarium Hub",
                     Text = "Cleared Nil Instances",
                     Duration = 5,
                     Button1 = "Okay"
@@ -360,7 +360,7 @@ coroutine.wrap(pcall)(function()
             end
         else
             StarterGui:SetCore("SendNotification", {
-                Title = "Axiora Hub",
+                Title = "Spolarium Hub",
                 Text = "Your exploit does not support getnilinstances, please use a different exploit.",
                 Duration = 5,
                 Button1 = "Okay"
@@ -372,7 +372,7 @@ end)
 local Descendants = game:GetDescendants()
 if _G.SendNotifications then
     StarterGui:SetCore("SendNotification", {
-        Title = "Axiora Hub",
+        Title = "Spolarium Hub",
         Text = "Checking " .. #Descendants .. " Instances...",
         Duration = 15,
         Button1 = "Okay"
@@ -385,7 +385,7 @@ for i, v in pairs(Descendants) do
     CheckIfBad(v)
 end
 StarterGui:SetCore("SendNotification", {
-    Title = "Axiora Hub",
+    Title = "Spolarium Hub",
     Text = "FPS Booster Loaded!",
     Duration = math.huge,
     Button1 = "Okay"
