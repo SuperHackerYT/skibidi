@@ -6,7 +6,11 @@ local UIS = game:GetService("UserInputService")
 local lp = Players.LocalPlayer
 
 function UI:CreateWindow(titleText)
-    local gui = Instance.new("ScreenGui", lp.PlayerGui)
+    local CoreGui = game:GetService("CoreGui")
+
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "c00lkiddUILib"
+    gui.Parent = CoreGui
     gui.Name = "c00lkiddUILib"
 
     local main = Instance.new("Frame", gui)
