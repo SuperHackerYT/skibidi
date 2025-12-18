@@ -108,6 +108,70 @@ function UI:CreateWindow(titleText)
             y += 35
         end
 
+function Tab:AddSlider(text, min, max, default, callback)
+    local value = default or min
+
+    local holder = Instance.new("Frame", page)
+    holder.Size = UDim2.new(0, 400, 0, 40)
+    holder.Position = UDim2.new(0, 25, 0, y)
+    holder.BackgroundColor3 = Color3.fromRGB(25,25,25)
+    holder.BorderColor3 = Color3.fromRGB(255,0,0)
+
+    local label = Instance.new("TextLabel", holder)
+    label.Size = UDim2.new(1, -10, 0, 18)
+    label.Position = UDim2.new(0, 5, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text .. ": " .. value
+    label.TextColor3 = Color3.fromRGB(255,0,0)
+    label.Font = Enum.Font.Gotham
+    label.TextSize = 14
+    label.TextXAlignment = Left
+
+    local bar = Instance.new("Frame", holder)
+    bar.Size = UDim2.new(1, -20, 0, 6)
+    bar.Position = UDim2.new(0, 10, 0, 26)
+    bar.BackgroundColor3 = Color3.fromRGB(10,10,10)
+    bar.BorderColor3 = Color3.fromRGB(255,0,0)
+
+    local fill = Instance.new("Frame", bar)
+    fill.Size = UDim2.new((value-min)/(max-min),0,1,0)
+    fill.BackgroundColor3 = Color3.fromRGB(150,0,0)
+    fill.BorderSizePixel = 0
+
+    local dragging = false
+
+    bar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+        end
+    end)
+
+    UIS.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+        or input.UserInputType == Enum.UserInputType.Touch) then
+            local pos = math.clamp(
+                (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X,
+                0, 1
+            )
+            value = math.floor((min + (max-min)*pos)*100)/100
+            fill.Size = UDim2.new(pos,0,1,0)
+            label.Text = text .. ": " .. value
+            callback(value)
+        end
+    end)
+
+    callback(value)
+    y += 45
+        end
+        
         function Tab:AddToggle(text, default, callback)
             local state = default
 
