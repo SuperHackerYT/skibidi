@@ -220,7 +220,7 @@ local function buttonHover(button)
     button.MouseEnter:Connect(function()
         local tween = TweenService:Create(button, TweenInfo.new(0.2), {
             BackgroundTransparency = 0.1,
-            ImageTransparency = 0  
+              
         })
         tween:Play()
     end)
@@ -228,7 +228,7 @@ local function buttonHover(button)
     button.MouseLeave:Connect(function()
         local tween = TweenService:Create(button, TweenInfo.new(0.2), {
             BackgroundTransparency = button == CloseButton and 0.3 or 0.2,
-            ImageTransparency = 0  
+              
         })
         tween:Play()
     end)
