@@ -7164,7 +7164,7 @@ NAmanage.NASettingsGetSchema=function()
 		return NAStuff.NASettingsSchema
 	end
 
-	local defaultStrokeColor = Color3.fromRGB(148, 93, 255)
+	local defaultStrokeColor = Color3.fromRGB(135, 206, 235)
 
 	local function coerceBoolean(value, fallback)
 		if type(value) == "boolean" then
@@ -7898,7 +7898,7 @@ if FileSupport then
 end
 
 function InitUIStroke()
-	local defaultColor = Color3.fromRGB(148, 93, 255)
+	local defaultColor = Color3.fromRGB(135, 206, 235)
 
 	if not FileSupport then
 		DoNotif("Main Color defaulted: no file support")
@@ -9109,7 +9109,7 @@ else
 	NATopbarPositionRatio = 0
 	NATopbarDock = "top"
 	NALoadingStartMinimized = false
-	NAUISTROKER = Color3.fromRGB(148, 93, 255)
+	NAUISTROKER = Color3.fromRGB(135, 206, 235)
 	opt.currentTagText = "Tag"
 	opt.currentTagColor = Color3.fromRGB(0, 255, 170)
 	opt.currentTagRGB = false
