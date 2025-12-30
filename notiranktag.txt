@@ -1,93 +1,268 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/Extras.txt"))()
 
-local NotificationService = game:GetService("NotificationService")
-local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
-local function savePreference(enabled)
-    player:SetAttribute("RankTagsEnabled", enabled)
+local NotificationGUI = Instance.new("ScreenGui")
+NotificationGUI.Name = "RankTagNotification"
+NotificationGUI.ResetOnSpawn = false
+NotificationGUI.DisplayOrder = 1000
+NotificationGUI.Parent = player:WaitForChild("PlayerGui")
+
+local NotificationFrame = Instance.new("Frame")
+NotificationFrame.Name = "NotificationFrame"
+NotificationFrame.Size = UDim2.new(0, 400, 0, 180)
+NotificationFrame.Position = UDim2.new(0.5, -200, 0.3, -90)
+NotificationFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+NotificationFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+NotificationFrame.BackgroundTransparency = 0.3
+NotificationFrame.BorderSizePixel = 0
+NotificationFrame.Visible = false
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 25)
+Corner.Parent = NotificationFrame
+
+local GlassStroke = Instance.new("UIStroke")
+GlassStroke.Color = Color3.fromRGB(255, 255, 255)
+GlassStroke.Thickness = 2
+GlassStroke.Transparency = 0.7
+GlassStroke.Parent = NotificationFrame
+
+local GlassEffect = Instance.new("Frame")
+GlassEffect.Size = UDim2.new(1, 0, 1, 0)
+GlassEffect.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+GlassEffect.BackgroundTransparency = 0.95
+GlassEffect.BorderSizePixel = 0
+
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 180, 220)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 100, 150))
+}
+UIGradient.Transparency = NumberSequence.new(0.85)
+UIGradient.Rotation = 120
+UIGradient.Parent = GlassEffect
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Size = UDim2.new(1, -40, 0, 40)
+TitleLabel.Position = UDim2.new(0, 20, 0, 15)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "RANK TAGS"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 22
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local MessageLabel = Instance.new("TextLabel")
+MessageLabel.Name = "MessageLabel"
+MessageLabel.Size = UDim2.new(1, -40, 0, 60)
+MessageLabel.Position = UDim2.new(0, 20, 0, 60)
+MessageLabel.BackgroundTransparency = 1
+MessageLabel.Text = "Would you like to enable Rank Tags?\nDisplay special tags next to player names."
+MessageLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+MessageLabel.TextSize = 16
+MessageLabel.Font = Enum.Font.Gotham
+MessageLabel.TextWrapped = true
+MessageLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local TimerLabel = Instance.new("TextLabel")
+TimerLabel.Name = "TimerLabel"
+TimerLabel.Size = UDim2.new(1, -40, 0, 20)
+TimerLabel.Position = UDim2.new(0, 20, 0, 125)
+TimerLabel.BackgroundTransparency = 1
+TimerLabel.Text = "Auto-disables in 5 seconds"
+TimerLabel.TextColor3 = Color3.fromRGB(180, 180, 220)
+TimerLabel.TextSize = 14
+TimerLabel.Font = Enum.Font.Gotham
+TimerLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local ButtonsContainer = Instance.new("Frame")
+ButtonsContainer.Name = "ButtonsContainer"
+ButtonsContainer.Size = UDim2.new(1, -40, 0, 45)
+ButtonsContainer.Position = UDim2.new(0, 20, 1, -55)
+ButtonsContainer.BackgroundTransparency = 1
+
+local YesButton = Instance.new("TextButton")
+YesButton.Name = "YesButton"
+YesButton.Size = UDim2.new(0.45, 0, 1, 0)
+YesButton.Position = UDim2.new(0, 0, 0, 0)
+YesButton.BackgroundColor3 = Color3.fromRGB(80, 180, 100)
+YesButton.BackgroundTransparency = 0.3
+YesButton.Text = "YES"
+YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+YesButton.TextSize = 18
+YesButton.Font = Enum.Font.GothamBold
+
+local YesCorner = Instance.new("UICorner")
+YesCorner.CornerRadius = UDim.new(0, 15)
+YesCorner.Parent = YesButton
+
+local YesStroke = Instance.new("UIStroke")
+YesStroke.Color = Color3.fromRGB(120, 220, 140)
+YesStroke.Thickness = 2
+YesStroke.Transparency = 0.5
+YesStroke.Parent = YesButton
+
+local NoButton = Instance.new("TextButton")
+NoButton.Name = "NoButton"
+NoButton.Size = UDim2.new(0.45, 0, 1, 0)
+NoButton.Position = UDim2.new(0.55, 0, 0, 0)
+NoButton.BackgroundColor3 = Color3.fromRGB(180, 80, 80)
+NoButton.BackgroundTransparency = 0.3
+NoButton.Text = "NO"
+NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+NoButton.TextSize = 18
+NoButton.Font = Enum.Font.GothamBold
+
+local NoCorner = Instance.new("UICorner")
+NoCorner.CornerRadius = UDim.new(0, 15)
+NoCorner.Parent = NoButton
+
+local NoStroke = Instance.new("UIStroke")
+NoStroke.Color = Color3.fromRGB(220, 120, 120)
+NoStroke.Thickness = 2
+NoStroke.Transparency = 0.5
+NoStroke.Parent = NoButton
+
+GlassEffect.Parent = NotificationFrame
+TitleLabel.Parent = NotificationFrame
+MessageLabel.Parent = NotificationFrame
+TimerLabel.Parent = NotificationFrame
+ButtonsContainer.Parent = NotificationFrame
+YesButton.Parent = ButtonsContainer
+NoButton.Parent = ButtonsContainer
+NotificationFrame.Parent = NotificationGUI
+
+local function buttonHover(button, originalTransparency)
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {
+            BackgroundTransparency = originalTransparency - 0.1,
+            Size = UDim2.new(button.Size.X.Scale + 0.02, 0, 1.1, 0)
+        }):Play()
+    end)
     
-    local success = pcall(function()
-        local DataStoreService = game:GetService("DataStoreService")
-        local rankTagsStore = DataStoreService:GetDataStore("RankTagsSettings")
-        rankTagsStore:SetAsync(tostring(player.UserId), enabled)
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {
+            BackgroundTransparency = originalTransparency,
+            Size = UDim2.new(0.45, 0, 1, 0)
+        }):Play()
     end)
 end
 
-local function loadPreference()
-    local attrSetting = player:GetAttribute("RankTagsEnabled")
-    if attrSetting ~= nil then
-        return attrSetting
+buttonHover(YesButton, 0.3)
+buttonHover(NoButton, 0.3)
+
+local countdownTimer = nil
+local countdownTime = 5
+local isNotificationActive = false
+
+local function showNotification()
+    if isNotificationActive then return end
+    isNotificationActive = true
+    
+    NotificationFrame.Position = UDim2.new(0.5, -200, 0.2, -90)
+    NotificationFrame.BackgroundTransparency = 1
+    NotificationFrame.Visible = true
+    
+    TweenService:Create(NotificationFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Position = UDim2.new(0.5, -200, 0.3, -90),
+        BackgroundTransparency = 0.3
+    }):Play()
+    
+    countdownTime = 5
+    TimerLabel.Text = "Auto-disables in " .. countdownTime .. " seconds"
+    
+    if countdownTimer then
+        countdownTimer:Disconnect()
     end
     
-    local success, savedSetting = pcall(function()
-        local DataStoreService = game:GetService("DataStoreService")
-        local rankTagsStore = DataStoreService:GetDataStore("RankTagsSettings")
-        return rankTagsStore:GetAsync(tostring(player.UserId))
+    countdownTimer = game:GetService("RunService").Heartbeat:Connect(function(delta)
+        countdownTime = countdownTime - delta
+        if countdownTime <= 0 then
+            countdownTimer:Disconnect()
+            TimerLabel.Text = "Auto-disabled"
+            
+            task.wait(0.5)
+            NoButton.MouseButton1Click:Fire()
+        else
+            TimerLabel.Text = "Auto-disables in " .. math.floor(countdownTime) .. " seconds"
+        end
     end)
-    
-    if success and savedSetting ~= nil then
-        return savedSetting
-    end
-    
-    return nil 
 end
 
-local function askForRankTags()
-    local savedPref = loadPreference()
-    if savedPref ~= nil then
-        if savedPref == true then
-            local success, error = pcall(function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/TagRank.txt"))()
-            end)
-            if not success then
-                warn("Failed to load Rank Tags:", error)
-            end
-        end
-        return
+local function hideNotification()
+    if not isNotificationActive then return end
+    
+    if countdownTimer then
+        countdownTimer:Disconnect()
+        countdownTimer = nil
     end
     
-    local notification = {
-        Title = "Rank Tags",
-        Text = "Would you like to enable Rank Tags?\nSpecial tags will appear next to player names.",
-        Duration = 5, 
-        Button1 = "Yes",
-        Button2 = "No",
-        Callback = function(response)
-            if response == "Button1" then 
-                print("[Rank Tags] User enabled rank tags")
-                savePreference(true)
-                
-                local success, error = pcall(function()
-                    loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/TagRank.txt"))()
-                end)
-                
-                if not success then
-                    warn("[Rank Tags] Failed to load script:", error)
-                    NotificationService:SendNotification({
-                        Title = "Rank Tags Error",
-                        Text = "Failed to load rank tags script.",
-                        Duration = 3
-                    })
-                end
-                
-            else 
-                print("[Rank Tags] User disabled rank tags")
-                savePreference(false)
-            end
-        end
-    }
+    TweenService:Create(NotificationFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Position = UDim2.new(0.5, -200, 0.2, -90),
+        BackgroundTransparency = 1
+    }):Play()
     
-    local success, result = pcall(function()
-        NotificationService:SendNotification(notification)
+    task.wait(0.5)
+    NotificationFrame.Visible = false
+    isNotificationActive = false
+end
+
+YesButton.MouseButton1Click:Connect(function()
+    print("[Rank Tags] User chose YES")
+    hideNotification()
+    
+    local success, error = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/TagRank.txt"))()
     end)
     
     if not success then
-        warn("[Rank Tags] Notification failed:", result)
+        warn("Failed to load Rank Tags:", error)
     end
+end)
+
+NoButton.MouseButton1Click:Connect(function()
+    print("[Rank Tags] User chose NO")
+    hideNotification()
+end)
+
+task.wait(2)
+showNotification()
+
+NotificationFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local dragStart = input.Position
+        local frameStart = NotificationFrame.Position
+        
+        local connection
+        connection = input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                connection:Disconnect()
+            end
+        end)
+        
+        local dragConnection = game:GetService("UserInputService").InputChanged:Connect(function(moveInput)
+            if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
+                local delta = moveInput.Position - dragStart
+                NotificationFrame.Position = UDim2.new(
+                    frameStart.X.Scale,
+                    frameStart.X.Offset + delta.X,
+                    frameStart.Y.Scale,
+                    frameStart.Y.Offset + delta.Y
+                )
+            end
+        end)
+        
+        task.wait()
+        dragConnection:Disconnect()
+    end
+end)
+
+local function showRankTagNotification()
+    showNotification()
 end
 
-task.delay(2, askForRankTags)
-
-return askForRankTags
+return showRankTagNotification
