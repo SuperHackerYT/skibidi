@@ -1,5 +1,7 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/SkyAdmin.lua"))()
 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/notiranktag.txt"))()
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -680,4 +682,5 @@ return {
     toggle = toggleCommandsGUI,
     gui = CommandsGUI,
     button = CommandsButton
+
 }
