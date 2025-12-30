@@ -1,0 +1,91 @@
+local NotificationService = game:GetService("NotificationService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local function savePreference(enabled)
+    player:SetAttribute("RankTagsEnabled", enabled)
+    
+    local success = pcall(function()
+        local DataStoreService = game:GetService("DataStoreService")
+        local rankTagsStore = DataStoreService:GetDataStore("RankTagsSettings")
+        rankTagsStore:SetAsync(tostring(player.UserId), enabled)
+    end)
+end
+
+local function loadPreference()
+    local attrSetting = player:GetAttribute("RankTagsEnabled")
+    if attrSetting ~= nil then
+        return attrSetting
+    end
+    
+    local success, savedSetting = pcall(function()
+        local DataStoreService = game:GetService("DataStoreService")
+        local rankTagsStore = DataStoreService:GetDataStore("RankTagsSettings")
+        return rankTagsStore:GetAsync(tostring(player.UserId))
+    end)
+    
+    if success and savedSetting ~= nil then
+        return savedSetting
+    end
+    
+    return nil 
+end
+
+local function askForRankTags()
+    local savedPref = loadPreference()
+    if savedPref ~= nil then
+        if savedPref == true then
+            local success, error = pcall(function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/TagRank.txt"))()
+            end)
+            if not success then
+                warn("Failed to load Rank Tags:", error)
+            end
+        end
+        return
+    end
+    
+    local notification = {
+        Title = "Rank Tags",
+        Text = "Would you like to enable Rank Tags?\nSpecial tags will appear next to player names.",
+        Duration = 5, 
+        Button1 = "Yes",
+        Button2 = "No",
+        Callback = function(response)
+            if response == "Button1" then 
+                print("[Rank Tags] User enabled rank tags")
+                savePreference(true)
+                
+                local success, error = pcall(function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/TagRank.txt"))()
+                end)
+                
+                if not success then
+                    warn("[Rank Tags] Failed to load script:", error)
+                    NotificationService:SendNotification({
+                        Title = "Rank Tags Error",
+                        Text = "Failed to load rank tags script.",
+                        Duration = 3
+                    })
+                end
+                
+            else 
+                print("[Rank Tags] User disabled rank tags")
+                savePreference(false)
+            end
+        end
+    }
+    
+    local success, result = pcall(function()
+        NotificationService:SendNotification(notification)
+    end)
+    
+    if not success then
+        warn("[Rank Tags] Notification failed:", result)
+    end
+end
+
+task.delay(2, askForRankTags)
+
+return askForRankTags
