@@ -682,5 +682,4 @@ return {
     toggle = toggleCommandsGUI,
     gui = CommandsGUI,
     button = CommandsButton
-
 }
