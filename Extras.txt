@@ -13,20 +13,20 @@ StatsGUI.Parent = player:WaitForChild("PlayerGui")
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "StatsFrame"
 MainFrame.Size = UDim2.new(0, 220, 0, 180)
-MainFrame.Position = UDim2.new(1, -20, 0, 20) 
+MainFrame.Position = UDim2.new(1, -230, 0, 20)
 MainFrame.AnchorPoint = Vector2.new(1, 0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
-MainFrame.BackgroundTransparency = 0.3
+MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MainFrame.BackgroundTransparency = 0.9
 MainFrame.BorderSizePixel = 0
 
 local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 20)
+Corner.CornerRadius = UDim.new(0, 15)
 Corner.Parent = MainFrame
 
 local GlassBorder = Instance.new("UIStroke")
 GlassBorder.Color = Color3.fromRGB(255, 255, 255)
-GlassBorder.Transparency = 0.8
-GlassBorder.Thickness = 2
+GlassBorder.Transparency = 0.9
+GlassBorder.Thickness = 1
 GlassBorder.Parent = MainFrame
 
 local GlassEffect = Instance.new("Frame")
@@ -34,47 +34,44 @@ GlassEffect.Size = UDim2.new(1, 0, 1, 0)
 GlassEffect.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 GlassEffect.BackgroundTransparency = 0.95
 GlassEffect.BorderSizePixel = 0
-
-local UIGradient = Instance.new("UIGradient")
-UIGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 180, 220)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 100, 150))
-}
-UIGradient.Transparency = NumberSequence.new(0.85)
-UIGradient.Rotation = 120
-UIGradient.Parent = GlassEffect
+GlassEffect.Parent = MainFrame
 
 local Header = Instance.new("Frame")
 Header.Name = "Header"
 Header.Size = UDim2.new(1, 0, 0, 50)
-Header.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
-Header.BackgroundTransparency = 0.4
+Header.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Header.BackgroundTransparency = 0.95
 Header.BorderSizePixel = 0
+Header.Parent = MainFrame
 
 local HeaderCorner = Instance.new("UICorner")
-HeaderCorner.CornerRadius = UDim.new(0, 20)
+HeaderCorner.CornerRadius = UDim.new(0, 15)
 HeaderCorner.Parent = Header
 
 local LogoContainer = Instance.new("Frame")
-LogoContainer.Size = UDim2.new(0, 40, 0, 40)
-LogoContainer.Position = UDim2.new(0, 10, 0, 5)
+LogoContainer.Size = UDim2.new(0, 35, 0, 35)
+LogoContainer.Position = UDim2.new(0, 10, 0, 8)
 LogoContainer.BackgroundTransparency = 1
+LogoContainer.Parent = Header
 
 local Logo = Instance.new("ImageLabel")
 Logo.Size = UDim2.new(1, 0, 1, 0)
 Logo.BackgroundTransparency = 1
-Logo.Image = "rbxassetid://82795327169782"
-Logo.ImageColor3 = Color3.fromRGB(120, 160, 255)
+Logo.Image = "http://www.roblox.com/asset/?id=82795327169782"
+Logo.ImageColor3 = Color3.fromRGB(255, 255, 255)
+Logo.ImageTransparency = 0.2
+Logo.Parent = LogoContainer
 
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -60, 1, 0)
-Title.Position = UDim2.new(0, 55, 0, 0)
+Title.Size = UDim2.new(1, -55, 1, 0)
+Title.Position = UDim2.new(0, 50, 0, 0)
 Title.BackgroundTransparency = 1
 Title.Text = "SkyArc"
-Title.TextColor3 = Color3.fromRGB(120, 160, 255) 
-Title.TextSize = 20
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 18
 Title.Font = Enum.Font.GothamBold
 Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Header
 
 local ExecutorLabel = Instance.new("TextLabel")
 ExecutorLabel.Name = "ExecutorLabel"
@@ -82,38 +79,48 @@ ExecutorLabel.Size = UDim2.new(1, -20, 0, 25)
 ExecutorLabel.Position = UDim2.new(0, 10, 0, 55)
 ExecutorLabel.BackgroundTransparency = 1
 ExecutorLabel.Text = "Executor: Loading..."
-ExecutorLabel.TextColor3 = Color3.fromRGB(120, 160, 255) 
+ExecutorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 ExecutorLabel.TextSize = 14
 ExecutorLabel.Font = Enum.Font.Gotham
 ExecutorLabel.TextXAlignment = Enum.TextXAlignment.Left
+ExecutorLabel.Parent = MainFrame
 
 local StatsContainer = Instance.new("Frame")
 StatsContainer.Name = "StatsContainer"
 StatsContainer.Size = UDim2.new(1, -20, 0, 80)
 StatsContainer.Position = UDim2.new(0, 10, 0, 85)
-StatsContainer.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-StatsContainer.BackgroundTransparency = 0.5
+StatsContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+StatsContainer.BackgroundTransparency = 0.95
 StatsContainer.BorderSizePixel = 0
+StatsContainer.Parent = MainFrame
 
 local StatsCorner = Instance.new("UICorner")
-StatsCorner.CornerRadius = UDim.new(0, 15)
+StatsCorner.CornerRadius = UDim.new(0, 12)
 StatsCorner.Parent = StatsContainer
+
+local StatsBorder = Instance.new("UIStroke")
+StatsBorder.Color = Color3.fromRGB(255, 255, 255)
+StatsBorder.Transparency = 0.9
+StatsBorder.Thickness = 1
+StatsBorder.Parent = StatsContainer
 
 local FPSContainer = Instance.new("Frame")
 FPSContainer.Name = "FPSContainer"
 FPSContainer.Size = UDim2.new(1, -20, 0.45, -5)
 FPSContainer.Position = UDim2.new(0, 10, 0, 10)
 FPSContainer.BackgroundTransparency = 1
+FPSContainer.Parent = StatsContainer
 
 local FPSLabel = Instance.new("TextLabel")
 FPSLabel.Name = "FPSLabel"
 FPSLabel.Size = UDim2.new(0.4, 0, 1, 0)
 FPSLabel.BackgroundTransparency = 1
 FPSLabel.Text = "FPS:"
-FPSLabel.TextColor3 = Color3.fromRGB(180, 180, 220) 
+FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FPSLabel.TextSize = 14
 FPSLabel.Font = Enum.Font.Gotham
 FPSLabel.TextXAlignment = Enum.TextXAlignment.Left
+FPSLabel.Parent = FPSContainer
 
 local FPSValue = Instance.new("TextLabel")
 FPSValue.Name = "FPSValue"
@@ -121,26 +128,29 @@ FPSValue.Size = UDim2.new(0.6, 0, 1, 0)
 FPSValue.Position = UDim2.new(0.4, 0, 0, 0)
 FPSValue.BackgroundTransparency = 1
 FPSValue.Text = "0"
-FPSValue.TextColor3 = Color3.fromRGB(120, 160, 255) 
+FPSValue.TextColor3 = Color3.fromRGB(255, 255, 255)
 FPSValue.TextSize = 16
 FPSValue.Font = Enum.Font.GothamBold
 FPSValue.TextXAlignment = Enum.TextXAlignment.Right
+FPSValue.Parent = FPSContainer
 
 local PingContainer = Instance.new("Frame")
 PingContainer.Name = "PingContainer"
 PingContainer.Size = UDim2.new(1, -20, 0.45, -5)
 PingContainer.Position = UDim2.new(0, 10, 0.55, 5)
 PingContainer.BackgroundTransparency = 1
+PingContainer.Parent = StatsContainer
 
 local PingLabel = Instance.new("TextLabel")
 PingLabel.Name = "PingLabel"
 PingLabel.Size = UDim2.new(0.4, 0, 1, 0)
 PingLabel.BackgroundTransparency = 1
 PingLabel.Text = "Ping:"
-PingLabel.TextColor3 = Color3.fromRGB(180, 180, 220) 
+PingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 PingLabel.TextSize = 14
 PingLabel.Font = Enum.Font.Gotham
 PingLabel.TextXAlignment = Enum.TextXAlignment.Left
+PingLabel.Parent = PingContainer
 
 local PingValue = Instance.new("TextLabel")
 PingValue.Name = "PingValue"
@@ -148,43 +158,30 @@ PingValue.Size = UDim2.new(0.6, 0, 1, 0)
 PingValue.Position = UDim2.new(0.4, 0, 0, 0)
 PingValue.BackgroundTransparency = 1
 PingValue.Text = "0 ms"
-PingValue.TextColor3 = Color3.fromRGB(120, 160, 255) 
+PingValue.TextColor3 = Color3.fromRGB(255, 255, 255)
 PingValue.TextSize = 16
 PingValue.Font = Enum.Font.GothamBold
 PingValue.TextXAlignment = Enum.TextXAlignment.Right
+PingValue.Parent = PingContainer
 
 local StatusIndicator = Instance.new("Frame")
 StatusIndicator.Name = "StatusIndicator"
 StatusIndicator.Size = UDim2.new(0, 8, 0, 8)
 StatusIndicator.Position = UDim2.new(1, -15, 1, -15)
-StatusIndicator.BackgroundColor3 = Color3.fromRGB(120, 160, 255) 
+StatusIndicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+StatusIndicator.BackgroundTransparency = 0.3
 StatusIndicator.BorderSizePixel = 0
+StatusIndicator.Parent = MainFrame
 
 local StatusCorner = Instance.new("UICorner")
 StatusCorner.CornerRadius = UDim.new(1, 0)
 StatusCorner.Parent = StatusIndicator
 
-GlassEffect.Parent = MainFrame
-Header.Parent = MainFrame
-LogoContainer.Parent = Header
-Logo.Parent = LogoContainer
-Title.Parent = Header
-ExecutorLabel.Parent = MainFrame
-StatsContainer.Parent = MainFrame
-FPSContainer.Parent = StatsContainer
-FPSLabel.Parent = FPSContainer
-FPSValue.Parent = FPSContainer
-PingContainer.Parent = StatsContainer
-PingLabel.Parent = PingContainer
-PingValue.Parent = PingContainer
-StatusIndicator.Parent = MainFrame
-MainFrame.Parent = StatsGUI
-
 local lastTime = tick()
 local frameCount = 0
 local fps = 0
 local ping = 0
-local updateInterval = 0.5 
+local updateInterval = 0.5
 local lastUpdate = 0
 
 local function getExecutorName()
@@ -208,7 +205,7 @@ end
 local function updateExecutorDisplay()
     local executorName = getExecutorName()
     ExecutorLabel.Text = "Executor: " .. executorName
-    ExecutorLabel.TextColor3 = Color3.fromRGB(120, 160, 255)
+    ExecutorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 end
 
 local function updateFPS()
@@ -220,7 +217,7 @@ local function updateFPS()
         frameCount = 0
         lastTime = currentTime
         
-        FPSValue.TextColor3 = Color3.fromRGB(120, 160, 255)
+        FPSValue.TextColor3 = Color3.fromRGB(255, 255, 255)
         FPSValue.Text = tostring(fps)
     end
 end
@@ -242,11 +239,11 @@ local function updatePing()
     if networkStats then
         ping = math.floor(networkStats:GetValue())
     else
-        ping = math.random(40, 120) 
+        ping = math.random(40, 120)
     end
     
-    PingValue.TextColor3 = Color3.fromRGB(120, 160, 255)
-    StatusIndicator.BackgroundColor3 = Color3.fromRGB(120, 160, 255)
+    PingValue.TextColor3 = Color3.fromRGB(255, 255, 255)
+    StatusIndicator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     PingValue.Text = tostring(ping) .. " ms"
 end
 
