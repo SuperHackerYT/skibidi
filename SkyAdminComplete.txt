@@ -1,0 +1,683 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SuperHackerYT/skibidi/refs/heads/main/SkyAdmin.lua"))()
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+local COMMANDS = {
+    ["Movement"] = {
+        "fly [speed] - Enable flying",
+        "unfly - Disable flying",
+        "speed [value] - Set walk speed",
+        "jumppower [value] / jp [value] - Set jump power",
+        "gravity [value] - Set gravity",
+        "infinitejump / infjump - Enable infinite jump",
+        "uninfinitejump / uninfjump - Disable infinite jump",
+        "noclip - Enable noclip",
+        "clip - Disable noclip",
+        "sit - Force sit",
+        "stand - Force stand",
+        "freeze - Freeze character",
+        "thaw / unfreeze - Unfreeze character",
+        "spin - Make character spin",
+        "unspin - Stop spinning",
+        "dance - Start dancing",
+        "undance / stopdance - Stop dancing"
+    },
+    ["Teleportation"] = {
+        "goto [player] - Teleport to player",
+        "tpto [x] [y] [z] - Teleport to coordinates",
+        "spawn - Teleport to spawn",
+        "back - Return to previous position",
+        "tptool - Get teleport tool",
+        "rejoin - Rejoin current server",
+        "serverhop - Find and join new server"
+    },
+    ["Character"] = {
+        "reset - Reset character",
+        "godmode / noparttouch - Enable god mode",
+        "ungodmode / parttouch - Disable god mode"
+    },
+    ["Visual"] = {
+        "esp - Enable player ESP",
+        "unesp - Disable ESP",
+        "xray - Enable xray vision",
+        "unxray - Disable xray",
+        "fullbright / fb - Enable fullbright",
+        "unfullbright / unfb - Disable fullbright",
+        "fog [distance] - Set fog distance",
+        "nofog - Reset fog",
+        "time [hour] - Set time of day"
+    },
+    ["Tools & Items"] = {
+        "gear [id] - Add gear by ID",
+        "notools / cleartools - Remove all tools",
+        "copyid - Copy game ID to clipboard"
+    },
+    ["Utilities"] = {
+        "test123 - Test command",
+        "infiniteyield / iy - Load Infinite Yield",
+        "unbanvoicechat - Enable voice chat"
+    }
+}
+
+local CommandsGUI = Instance.new("ScreenGui")
+CommandsGUI.Name = "CommandsGlassGUI"
+CommandsGUI.ResetOnSpawn = false
+CommandsGUI.DisplayOrder = 998
+CommandsGUI.Parent = player:WaitForChild("PlayerGui")
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "CommandsFrame"
+MainFrame.Size = UDim2.new(0.4, 0, 0.6, 0)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+MainFrame.BackgroundTransparency = 0.3
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Visible = false
+
+if UserInputService.TouchEnabled then
+    MainFrame.Size = UDim2.new(0.9, 0, 0.7, 0)
+    MainFrame.Draggable = false
+end
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 20)
+Corner.Parent = MainFrame
+
+local GlassBorder = Instance.new("UIStroke")
+GlassBorder.Color = Color3.fromRGB(255, 255, 255)
+GlassBorder.Transparency = 0.8
+GlassBorder.Thickness = 2
+GlassBorder.Parent = MainFrame
+
+local GlassEffect = Instance.new("Frame")
+GlassEffect.Size = UDim2.new(1, 0, 1, 0)
+GlassEffect.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+GlassEffect.BackgroundTransparency = 0.95
+GlassEffect.BorderSizePixel = 0
+
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 180, 220)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 100, 150))
+}
+UIGradient.Transparency = NumberSequence.new(0.85)
+UIGradient.Rotation = 120
+UIGradient.Parent = GlassEffect
+
+local TopBar = Instance.new("Frame")
+TopBar.Name = "TopBar"
+TopBar.Size = UDim2.new(1, 0, 0, 40)
+TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
+TopBar.BackgroundTransparency = 0.4
+TopBar.BorderSizePixel = 0
+
+local TopCorner = Instance.new("UICorner")
+TopCorner.CornerRadius = UDim.new(0, 20)
+TopCorner.Parent = TopBar
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -100, 1, 0)
+Title.Position = UDim2.new(0, 15, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Sky Admin - Commands"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 16
+Title.Font = Enum.Font.GothamBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -40, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+CloseButton.BackgroundTransparency = 0.3
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 20
+CloseButton.Font = Enum.Font.GothamBold
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 15)
+CloseCorner.Parent = CloseButton
+
+local CloseGlow = Instance.new("UIStroke")
+CloseGlow.Color = Color3.fromRGB(255, 150, 150)
+CloseGlow.Transparency = 0.5
+CloseGlow.Thickness = 2
+CloseGlow.Parent = CloseButton
+
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Name = "MinimizeButton"
+MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
+MinimizeButton.Position = UDim2.new(1, -80, 0, 5)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 200, 50)
+MinimizeButton.BackgroundTransparency = 0.3
+MinimizeButton.Text = "–"
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextSize = 20
+MinimizeButton.Font = Enum.Font.GothamBold
+
+local MinimizeCorner = Instance.new("UICorner")
+MinimizeCorner.CornerRadius = UDim.new(0, 15)
+MinimizeCorner.Parent = MinimizeButton
+
+local MinimizeGlow = Instance.new("UIStroke")
+MinimizeGlow.Color = Color3.fromRGB(255, 220, 100)
+MinimizeGlow.Transparency = 0.5
+MinimizeGlow.Thickness = 2
+MinimizeGlow.Parent = MinimizeButton
+
+local SearchContainer = Instance.new("Frame")
+SearchContainer.Name = "SearchContainer"
+SearchContainer.Size = UDim2.new(1, -30, 0, 50)
+SearchContainer.Position = UDim2.new(0, 15, 0, 55)
+SearchContainer.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+SearchContainer.BackgroundTransparency = 0.4
+SearchContainer.BorderSizePixel = 0
+
+local SearchCorner = Instance.new("UICorner")
+SearchCorner.CornerRadius = UDim.new(0, 15)
+SearchCorner.Parent = SearchContainer
+
+local SearchBox = Instance.new("TextBox")
+SearchBox.Name = "SearchBox"
+SearchBox.Size = UDim2.new(1, -20, 1, -20)
+SearchBox.Position = UDim2.new(0, 10, 0, 10)
+SearchBox.BackgroundTransparency = 1
+SearchBox.Text = ""
+SearchBox.PlaceholderText = "Search commands..."
+SearchBox.PlaceholderColor3 = Color3.fromRGB(180, 180, 220)
+SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+SearchBox.TextSize = 16
+SearchBox.Font = Enum.Font.Gotham
+SearchBox.ClearTextOnFocus = false
+
+local SearchIcon = Instance.new("ImageLabel")
+SearchIcon.Name = "SearchIcon"
+SearchIcon.Size = UDim2.new(0, 20, 0, 20)
+SearchIcon.Position = UDim2.new(1, -35, 0.5, -10)
+SearchIcon.BackgroundTransparency = 1
+SearchIcon.Image = "rbxassetid://6035067838"
+SearchIcon.ImageColor3 = Color3.fromRGB(180, 180, 220)
+SearchIcon.ImageTransparency = 0.3
+
+local ClearSearchButton = Instance.new("TextButton")
+ClearSearchButton.Name = "ClearSearchButton"
+ClearSearchButton.Size = UDim2.new(0, 20, 0, 20)
+ClearSearchButton.Position = UDim2.new(1, -35, 0.5, -10)
+ClearSearchButton.BackgroundTransparency = 1
+ClearSearchButton.Text = "×"
+ClearSearchButton.TextColor3 = Color3.fromRGB(255, 100, 100)
+ClearSearchButton.TextSize = 18
+ClearSearchButton.Font = Enum.Font.GothamBold
+ClearSearchButton.Visible = false
+
+local ListContainer = Instance.new("Frame")
+ListContainer.Name = "ListContainer"
+ListContainer.Size = UDim2.new(1, -30, 1, -140)
+ListContainer.Position = UDim2.new(0, 15, 0, 120)
+ListContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+ListContainer.BackgroundTransparency = 0.5
+ListContainer.BorderSizePixel = 0
+ListContainer.ClipsDescendants = true
+
+local ListCorner = Instance.new("UICorner")
+ListCorner.CornerRadius = UDim.new(0, 15)
+ListCorner.Parent = ListContainer
+
+local ScrollFrame = Instance.new("ScrollingFrame")
+ScrollFrame.Name = "CommandScroll"
+ScrollFrame.Size = UDim2.new(1, 0, 1, 0)
+ScrollFrame.BackgroundTransparency = 1
+ScrollFrame.BorderSizePixel = 0
+ScrollFrame.ScrollBarThickness = 8
+ScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 150)
+ScrollFrame.ScrollBarImageTransparency = 0.3
+ScrollFrame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Name = "StatusLabel"
+StatusLabel.Size = UDim2.new(1, -20, 0, 30)
+StatusLabel.Position = UDim2.new(0, 10, 1, -40)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "Loading commands..."
+StatusLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+StatusLabel.TextSize = 14
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+GlassEffect.Parent = MainFrame
+TopBar.Parent = MainFrame
+Title.Parent = TopBar
+CloseButton.Parent = TopBar
+MinimizeButton.Parent = TopBar
+SearchContainer.Parent = MainFrame
+SearchBox.Parent = SearchContainer
+SearchIcon.Parent = SearchBox
+ClearSearchButton.Parent = SearchBox
+ListContainer.Parent = MainFrame
+ScrollFrame.Parent = ListContainer
+UIListLayout.Parent = ScrollFrame
+StatusLabel.Parent = ListContainer
+MainFrame.Parent = CommandsGUI
+
+local function buttonHover(button)
+    button.MouseEnter:Connect(function()
+        local tween = TweenService:Create(button, TweenInfo.new(0.2), {
+            BackgroundTransparency = 0.1,
+        })
+        tween:Play()
+    end)
+    
+    button.MouseLeave:Connect(function()
+        local tween = TweenService:Create(button, TweenInfo.new(0.2), {
+            BackgroundTransparency = button == CloseButton and 0.3 or 0.2,
+        })
+        tween:Play()
+    end)
+end
+
+buttonHover(CloseButton)
+buttonHover(MinimizeButton)
+buttonHover(ClearSearchButton)
+
+local minimized = false
+local originalSize = MainFrame.Size
+local minimizedSize = UDim2.new(0.4, 0, 0, 40)
+local commandElements = {}
+local showingCommands = {}
+
+local function createCommandItem(commandText, category)
+    local itemFrame = Instance.new("Frame")
+    itemFrame.Size = UDim2.new(1, 0, 0, 40)
+    itemFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+    itemFrame.BackgroundTransparency = 0.6
+    itemFrame.BorderSizePixel = 0
+    
+    local itemCorner = Instance.new("UICorner")
+    itemCorner.CornerRadius = UDim.new(0, 10)
+    itemCorner.Parent = itemFrame
+    
+    local commandLabel = Instance.new("TextLabel")
+    commandLabel.Size = UDim2.new(1, -20, 1, 0)
+    commandLabel.Position = UDim2.new(0, 10, 0, 0)
+    commandLabel.BackgroundTransparency = 1
+    commandLabel.Text = commandText
+    commandLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+    commandLabel.TextSize = 14
+    commandLabel.Font = Enum.Font.Gotham
+    commandLabel.TextXAlignment = Enum.TextXAlignment.Left
+    commandLabel.TextYAlignment = Enum.TextYAlignment.Center
+    commandLabel.TextWrapped = true
+    
+    local categoryTag = Instance.new("TextLabel")
+    categoryTag.Size = UDim2.new(0, 80, 0, 20)
+    categoryTag.Position = UDim2.new(1, -90, 0.5, -10)
+    categoryTag.BackgroundColor3 = Color3.fromRGB(80, 80, 120)
+    categoryTag.BackgroundTransparency = 0.5
+    categoryTag.Text = category
+    categoryTag.TextColor3 = Color3.fromRGB(200, 200, 255)
+    categoryTag.TextSize = 10
+    categoryTag.Font = Enum.Font.GothamBold
+    categoryTag.TextXAlignment = Enum.TextXAlignment.Center
+    categoryTag.TextYAlignment = Enum.TextYAlignment.Center
+    
+    local categoryCorner = Instance.new("UICorner")
+    categoryCorner.CornerRadius = UDim.new(0, 10)
+    categoryCorner.Parent = categoryTag
+    
+    commandLabel.Parent = itemFrame
+    categoryTag.Parent = itemFrame
+    itemFrame.Parent = ScrollFrame
+    
+    return itemFrame
+end
+
+local function createCategoryHeader(categoryName)
+    local headerFrame = Instance.new("Frame")
+    headerFrame.Size = UDim2.new(1, 0, 0, 30)
+    headerFrame.BackgroundTransparency = 1
+    
+    local headerLabel = Instance.new("TextLabel")
+    headerLabel.Size = UDim2.new(1, -10, 1, 0)
+    headerLabel.Position = UDim2.new(0, 10, 0, 0)
+    headerLabel.BackgroundTransparency = 1
+    headerLabel.Text = categoryName
+    headerLabel.TextColor3 = Color3.fromRGB(180, 180, 255)
+    headerLabel.TextSize = 16
+    headerLabel.Font = Enum.Font.GothamBold
+    headerLabel.TextXAlignment = Enum.TextXAlignment.Left
+    headerLabel.TextYAlignment = Enum.TextYAlignment.Center
+    
+    local divider = Instance.new("Frame")
+    divider.Size = UDim2.new(1, 0, 0, 1)
+    divider.Position = UDim2.new(0, 0, 1, -1)
+    divider.BackgroundColor3 = Color3.fromRGB(100, 100, 150)
+    divider.BackgroundTransparency = 0.5
+    divider.BorderSizePixel = 0
+    
+    headerLabel.Parent = headerFrame
+    divider.Parent = headerFrame
+    headerFrame.Parent = ScrollFrame
+    
+    return headerFrame
+end
+
+local function updateScrollCanvas()
+    task.wait(0.05)
+    
+    local totalHeight = 0
+    for _, child in pairs(ScrollFrame:GetChildren()) do
+        if child:IsA("Frame") then
+            totalHeight = totalHeight + child.Size.Y.Offset + UIListLayout.Padding.Offset
+        end
+    end
+    
+    totalHeight = totalHeight + 20
+    
+    ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+    
+    if ScrollFrame.CanvasPosition.Y > totalHeight - ScrollFrame.AbsoluteWindowSize.Y then
+        ScrollFrame.CanvasPosition = Vector2.new(0, math.max(0, totalHeight - ScrollFrame.AbsoluteWindowSize.Y))
+    end
+end
+
+UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    updateScrollCanvas()
+end)
+
+local function displayCommands(searchTerm)
+    for _, element in pairs(commandElements) do
+        if element then
+            element:Destroy()
+        end
+    end
+    commandElements = {}
+    showingCommands = {}
+    
+    local hasResults = false
+    
+    local searchLower = searchTerm and searchTerm:lower() or ""
+    
+    for categoryName, commands in pairs(COMMANDS) do
+        local categoryHasResults = false
+        local categoryCommands = {}
+        
+        for _, command in pairs(commands) do
+            if searchTerm == "" or command:lower():find(searchLower, 1, true) or categoryName:lower():find(searchLower, 1, true) then
+                table.insert(categoryCommands, command)
+                categoryHasResults = true
+                hasResults = true
+            end
+        end
+        
+        if categoryHasResults then
+            local header = createCategoryHeader(categoryName)
+            table.insert(commandElements, header)
+            
+            for _, command in pairs(categoryCommands) do
+                local item = createCommandItem(command, categoryName)
+                table.insert(commandElements, item)
+                table.insert(showingCommands, {item = item, text = command, category = categoryName})
+            end
+        end
+    end
+    
+    if searchTerm ~= "" then
+        if hasResults then
+            StatusLabel.Text = "Found " .. #showingCommands .. " command(s) for '" .. searchTerm .. "'"
+            StatusLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
+        else
+            StatusLabel.Text = "No commands found for '" .. searchTerm .. "'"
+            StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        end
+    else
+        StatusLabel.Text = #showingCommands .. " commands available"
+        StatusLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+    end
+    
+    task.wait(0.1)
+    ScrollFrame.CanvasPosition = Vector2.new(0, 0)
+    updateScrollCanvas()
+end
+
+local function copyCommandToClipboard(commandText)
+    local commandOnly = commandText:match("^(.-)%-") or commandText
+    commandOnly = commandOnly:gsub("%s+$", "")
+    
+    if pcall(function()
+        setclipboard(commandOnly)
+    end) then
+        StatusLabel.Text = "Copied: " .. commandOnly
+        StatusLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
+        
+        task.wait(2)
+        if SearchBox.Text == "" then
+            StatusLabel.Text = #showingCommands .. " commands available"
+            StatusLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+        else
+            StatusLabel.Text = "Found " .. #showingCommands .. " command(s) for '" .. SearchBox.Text .. "'"
+            StatusLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
+        end
+    else
+        StatusLabel.Text = "Could not copy to clipboard"
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end
+
+local function toggleCommandsGUI()
+    MainFrame.Visible = not MainFrame.Visible
+    if MainFrame.Visible then
+        displayCommands("")
+        SearchBox.Text = ""
+        ClearSearchButton.Visible = false
+        SearchIcon.Visible = true
+    end
+end
+
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+local originalDraggableState = MainFrame.Draggable
+
+MinimizeButton.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    
+    if minimized then
+        local tween = TweenService:Create(MainFrame, TweenInfo.new(0.3), {
+            Size = minimizedSize
+        })
+        tween:Play()
+        MinimizeButton.Text = "+"
+        
+        SearchContainer.Visible = false
+        ListContainer.Visible = false
+        
+        MainFrame.Draggable = originalDraggableState
+        MainFrame.Active = true
+    else
+        local tween = TweenService:Create(MainFrame, TweenInfo.new(0.3), {
+            Size = originalSize
+        })
+        tween:Play()
+        MinimizeButton.Text = "–"
+        
+        SearchContainer.Visible = true
+        ListContainer.Visible = true
+        
+        MainFrame.Draggable = originalDraggableState
+        MainFrame.Active = true
+    end
+end)
+
+SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    local text = SearchBox.Text
+    ClearSearchButton.Visible = text ~= ""
+    SearchIcon.Visible = text == ""
+    displayCommands(text)
+end)
+
+SearchBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        displayCommands(SearchBox.Text)
+    end
+end)
+
+ClearSearchButton.MouseButton1Click:Connect(function()
+    SearchBox.Text = ""
+    SearchBox:CaptureFocus()
+end)
+
+local function setupCommandClick(itemFrame, commandText)
+    itemFrame.MouseButton1Click:Connect(function()
+        copyCommandToClipboard(commandText)
+    end)
+    
+    itemFrame.MouseEnter:Connect(function()
+        local tween = TweenService:Create(itemFrame, TweenInfo.new(0.2), {
+            BackgroundTransparency = 0.4,
+        })
+        tween:Play()
+    end)
+    
+    itemFrame.MouseLeave:Connect(function()
+        local tween = TweenService:Create(itemFrame, TweenInfo.new(0.2), {
+            BackgroundTransparency = 0.6,
+        })
+        tween:Play()
+    end)
+end
+
+if UserInputService.TouchEnabled then
+    CloseButton.Size = UDim2.new(0, 40, 0, 40)
+    MinimizeButton.Size = UDim2.new(0, 40, 0, 40)
+    MinimizeButton.Position = UDim2.new(1, -90, 0, 5)
+    CloseButton.Position = UDim2.new(1, -45, 0, 5)
+    
+    SearchBox.TextSize = 18
+    StatusLabel.TextSize = 16
+    
+    ScrollFrame.ScrollBarThickness = 12
+    
+    local originalCreateCommandItem = createCommandItem
+    createCommandItem = function(commandText, category)
+        local item = originalCreateCommandItem(commandText, category)
+        item.Size = UDim2.new(1, 0, 0, 50)
+        
+        local commandLabel = item:FindFirstChildWhichIsA("TextLabel")
+        if commandLabel then
+            commandLabel.TextSize = 16
+        end
+        
+        return item
+    end
+end
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.F4 then
+        toggleCommandsGUI()
+    end
+end)
+
+local CommandsButton = Instance.new("TextButton")
+CommandsButton.Name = "CommandsTopButton"
+CommandsButton.Size = UDim2.new(0, 50, 0, 50)
+CommandsButton.Position = UDim2.new(0, 20, 0, 20)
+CommandsButton.BackgroundColor3 = Color3.fromRGB(120, 80, 255)
+CommandsButton.BackgroundTransparency = 0.2
+CommandsButton.Text = "☆"
+CommandsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CommandsButton.TextSize = 24
+CommandsButton.Font = Enum.Font.GothamBold
+CommandsButton.Visible = true
+CommandsButton.ZIndex = 999
+
+local CommandsButtonCorner = Instance.new("UICorner")
+CommandsButtonCorner.CornerRadius = UDim.new(1, 0)
+CommandsButtonCorner.Parent = CommandsButton
+
+local CommandsButtonGlow = Instance.new("UIStroke")
+CommandsButtonGlow.Color = Color3.fromRGB(160, 120, 255)
+CommandsButtonGlow.Transparency = 0.4
+CommandsButtonGlow.Thickness = 2
+CommandsButtonGlow.Parent = CommandsButton
+
+CommandsButton.MouseEnter:Connect(function()
+    local tween = TweenService:Create(CommandsButton, TweenInfo.new(0.2), {
+        BackgroundTransparency = 0.1,
+        Size = UDim2.new(0, 55, 0, 55)
+    })
+    tween:Play()
+end)
+
+CommandsButton.MouseLeave:Connect(function()
+    local tween = TweenService:Create(CommandsButton, TweenInfo.new(0.2), {
+        BackgroundTransparency = 0.2,
+        Size = UDim2.new(0, 50, 0, 50)
+    })
+    tween:Play()
+end)
+
+CommandsButton.MouseButton1Click:Connect(toggleCommandsGUI)
+
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    CommandsButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+CommandsButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = CommandsButton.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+CommandsButton.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
+
+CommandsButton.Parent = CommandsGUI
+
+displayCommands("")
+
+for _, cmdData in pairs(showingCommands) do
+    setupCommandClick(cmdData.item, cmdData.text)
+end
+
+return {
+    toggle = toggleCommandsGUI,
+    gui = CommandsGUI,
+    button = CommandsButton
+}
