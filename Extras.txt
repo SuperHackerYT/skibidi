@@ -4,36 +4,31 @@ local TweenService = game:GetService("TweenService")
 local StatsService = game:GetService("Stats")
 local player = Players.LocalPlayer
 
--- Create UI
 local StatsGUI = Instance.new("ScreenGui")
 StatsGUI.Name = "SkyArcStats"
 StatsGUI.ResetOnSpawn = false
 StatsGUI.DisplayOrder = 999
 StatsGUI.Parent = player:WaitForChild("PlayerGui")
 
--- Main Frame (Top Right Corner)
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "StatsFrame"
 MainFrame.Size = UDim2.new(0, 220, 0, 180)
-MainFrame.Position = UDim2.new(1, -20, 0, 20) -- Top right corner
+MainFrame.Position = UDim2.new(1, -20, 0, 20) 
 MainFrame.AnchorPoint = Vector2.new(1, 0)
 MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
 MainFrame.BackgroundTransparency = 0.3
 MainFrame.BorderSizePixel = 0
 
--- Glass corner
 local Corner = Instance.new("UICorner")
 Corner.CornerRadius = UDim.new(0, 20)
 Corner.Parent = MainFrame
 
--- Glass border
 local GlassBorder = Instance.new("UIStroke")
 GlassBorder.Color = Color3.fromRGB(255, 255, 255)
 GlassBorder.Transparency = 0.8
 GlassBorder.Thickness = 2
 GlassBorder.Parent = MainFrame
 
--- Glass effect
 local GlassEffect = Instance.new("Frame")
 GlassEffect.Size = UDim2.new(1, 0, 1, 0)
 GlassEffect.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -49,7 +44,6 @@ UIGradient.Transparency = NumberSequence.new(0.85)
 UIGradient.Rotation = 120
 UIGradient.Parent = GlassEffect
 
--- Header
 local Header = Instance.new("Frame")
 Header.Name = "Header"
 Header.Size = UDim2.new(1, 0, 0, 50)
@@ -61,7 +55,6 @@ local HeaderCorner = Instance.new("UICorner")
 HeaderCorner.CornerRadius = UDim.new(0, 20)
 HeaderCorner.Parent = Header
 
--- Logo and Title
 local LogoContainer = Instance.new("Frame")
 LogoContainer.Size = UDim2.new(0, 40, 0, 40)
 LogoContainer.Position = UDim2.new(0, 10, 0, 5)
@@ -70,7 +63,7 @@ LogoContainer.BackgroundTransparency = 1
 local Logo = Instance.new("ImageLabel")
 Logo.Size = UDim2.new(1, 0, 1, 0)
 Logo.BackgroundTransparency = 1
-Logo.Image = "rbxassetid://6031075938" -- Default star icon
+Logo.Image = "rbxassetid://82795327169782"
 Logo.ImageColor3 = Color3.fromRGB(120, 160, 255)
 
 local Title = Instance.new("TextLabel")
@@ -78,24 +71,22 @@ Title.Size = UDim2.new(1, -60, 1, 0)
 Title.Position = UDim2.new(0, 55, 0, 0)
 Title.BackgroundTransparency = 1
 Title.Text = "SkyArc"
-Title.TextColor3 = Color3.fromRGB(120, 160, 255) -- Blue color
+Title.TextColor3 = Color3.fromRGB(120, 160, 255) 
 Title.TextSize = 20
 Title.Font = Enum.Font.GothamBold
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Executor label
 local ExecutorLabel = Instance.new("TextLabel")
 ExecutorLabel.Name = "ExecutorLabel"
 ExecutorLabel.Size = UDim2.new(1, -20, 0, 25)
 ExecutorLabel.Position = UDim2.new(0, 10, 0, 55)
 ExecutorLabel.BackgroundTransparency = 1
 ExecutorLabel.Text = "Executor: Loading..."
-ExecutorLabel.TextColor3 = Color3.fromRGB(120, 160, 255) -- Blue color
+ExecutorLabel.TextColor3 = Color3.fromRGB(120, 160, 255) 
 ExecutorLabel.TextSize = 14
 ExecutorLabel.Font = Enum.Font.Gotham
 ExecutorLabel.TextXAlignment = Enum.TextXAlignment.Left
 
--- Stats Container
 local StatsContainer = Instance.new("Frame")
 StatsContainer.Name = "StatsContainer"
 StatsContainer.Size = UDim2.new(1, -20, 0, 80)
@@ -108,7 +99,6 @@ local StatsCorner = Instance.new("UICorner")
 StatsCorner.CornerRadius = UDim.new(0, 15)
 StatsCorner.Parent = StatsContainer
 
--- FPS Display
 local FPSContainer = Instance.new("Frame")
 FPSContainer.Name = "FPSContainer"
 FPSContainer.Size = UDim2.new(1, -20, 0.45, -5)
@@ -120,7 +110,7 @@ FPSLabel.Name = "FPSLabel"
 FPSLabel.Size = UDim2.new(0.4, 0, 1, 0)
 FPSLabel.BackgroundTransparency = 1
 FPSLabel.Text = "FPS:"
-FPSLabel.TextColor3 = Color3.fromRGB(180, 180, 220) -- Light blue
+FPSLabel.TextColor3 = Color3.fromRGB(180, 180, 220) 
 FPSLabel.TextSize = 14
 FPSLabel.Font = Enum.Font.Gotham
 FPSLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -131,12 +121,11 @@ FPSValue.Size = UDim2.new(0.6, 0, 1, 0)
 FPSValue.Position = UDim2.new(0.4, 0, 0, 0)
 FPSValue.BackgroundTransparency = 1
 FPSValue.Text = "0"
-FPSValue.TextColor3 = Color3.fromRGB(120, 160, 255) -- Blue color
+FPSValue.TextColor3 = Color3.fromRGB(120, 160, 255) 
 FPSValue.TextSize = 16
 FPSValue.Font = Enum.Font.GothamBold
 FPSValue.TextXAlignment = Enum.TextXAlignment.Right
 
--- Ping Display
 local PingContainer = Instance.new("Frame")
 PingContainer.Name = "PingContainer"
 PingContainer.Size = UDim2.new(1, -20, 0.45, -5)
@@ -148,7 +137,7 @@ PingLabel.Name = "PingLabel"
 PingLabel.Size = UDim2.new(0.4, 0, 1, 0)
 PingLabel.BackgroundTransparency = 1
 PingLabel.Text = "Ping:"
-PingLabel.TextColor3 = Color3.fromRGB(180, 180, 220) -- Light blue
+PingLabel.TextColor3 = Color3.fromRGB(180, 180, 220) 
 PingLabel.TextSize = 14
 PingLabel.Font = Enum.Font.Gotham
 PingLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -159,24 +148,22 @@ PingValue.Size = UDim2.new(0.6, 0, 1, 0)
 PingValue.Position = UDim2.new(0.4, 0, 0, 0)
 PingValue.BackgroundTransparency = 1
 PingValue.Text = "0 ms"
-PingValue.TextColor3 = Color3.fromRGB(120, 160, 255) -- Blue color
+PingValue.TextColor3 = Color3.fromRGB(120, 160, 255) 
 PingValue.TextSize = 16
 PingValue.Font = Enum.Font.GothamBold
 PingValue.TextXAlignment = Enum.TextXAlignment.Right
 
--- Status indicator
 local StatusIndicator = Instance.new("Frame")
 StatusIndicator.Name = "StatusIndicator"
 StatusIndicator.Size = UDim2.new(0, 8, 0, 8)
 StatusIndicator.Position = UDim2.new(1, -15, 1, -15)
-StatusIndicator.BackgroundColor3 = Color3.fromRGB(120, 160, 255) -- Blue color
+StatusIndicator.BackgroundColor3 = Color3.fromRGB(120, 160, 255) 
 StatusIndicator.BorderSizePixel = 0
 
 local StatusCorner = Instance.new("UICorner")
 StatusCorner.CornerRadius = UDim.new(1, 0)
 StatusCorner.Parent = StatusIndicator
 
--- Parent all elements
 GlassEffect.Parent = MainFrame
 Header.Parent = MainFrame
 LogoContainer.Parent = Header
@@ -193,15 +180,13 @@ PingValue.Parent = PingContainer
 StatusIndicator.Parent = MainFrame
 MainFrame.Parent = StatsGUI
 
--- Variables
 local lastTime = tick()
 local frameCount = 0
 local fps = 0
 local ping = 0
-local updateInterval = 0.5 -- Update every 0.5 seconds
+local updateInterval = 0.5 
 local lastUpdate = 0
 
--- Function to identify executor
 local function getExecutorName()
     if identifyexecutor then
         local success, result = pcall(identifyexecutor)
@@ -210,7 +195,6 @@ local function getExecutorName()
         end
     end
     
-    -- Fallback checks
     if getexecutorname then
         local success, result = pcall(getexecutorname)
         if success and result then
@@ -221,15 +205,12 @@ local function getExecutorName()
     return "Unknown"
 end
 
--- Function to update executor display
 local function updateExecutorDisplay()
     local executorName = getExecutorName()
     ExecutorLabel.Text = "Executor: " .. executorName
-    -- All executors show in blue
     ExecutorLabel.TextColor3 = Color3.fromRGB(120, 160, 255)
 end
 
--- Function to update FPS
 local function updateFPS()
     frameCount = frameCount + 1
     local currentTime = tick()
@@ -239,13 +220,11 @@ local function updateFPS()
         frameCount = 0
         lastTime = currentTime
         
-        -- Always blue for FPS
         FPSValue.TextColor3 = Color3.fromRGB(120, 160, 255)
         FPSValue.Text = tostring(fps)
     end
 end
 
--- Function to update ping
 local function updatePing()
     local stats = StatsService
     local networkStats = nil
@@ -263,17 +242,14 @@ local function updatePing()
     if networkStats then
         ping = math.floor(networkStats:GetValue())
     else
-        -- Fallback method
-        ping = math.random(40, 120) -- Mock ping for testing
+        ping = math.random(40, 120) 
     end
     
-    -- Always blue for ping
     PingValue.TextColor3 = Color3.fromRGB(120, 160, 255)
     StatusIndicator.BackgroundColor3 = Color3.fromRGB(120, 160, 255)
     PingValue.Text = tostring(ping) .. " ms"
 end
 
--- Function to update all stats
 local function updateStats()
     local currentTime = tick()
     
@@ -285,7 +261,6 @@ local function updateStats()
     updateFPS()
 end
 
--- Make UI draggable
 local dragging = false
 local dragStart = nil
 local frameStart = nil
@@ -320,20 +295,16 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
     end
 end)
 
--- Toggle visibility with F2
 game:GetService("UserInputService").InputBegan:Connect(function(input)
     if input.KeyCode == Enum.KeyCode.F2 then
         MainFrame.Visible = not MainFrame.Visible
     end
 end)
 
--- Initialize
 updateExecutorDisplay()
 
--- Main update loop
 RunService.RenderStepped:Connect(updateStats)
 
--- Make the UI auto-update executor every 10 seconds (in case it changes)
 task.spawn(function()
     while true do
         task.wait(10)
@@ -341,7 +312,6 @@ task.spawn(function()
     end
 end)
 
--- Return functions for external control
 return {
     toggleVisibility = function()
         MainFrame.Visible = not MainFrame.Visible
