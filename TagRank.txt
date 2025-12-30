@@ -1,0 +1,228 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+
+local OWNER_USERNAMES = {
+    "Yoolacjo",
+    "Super_Kaung"
+}
+
+local RANK_DATA = {
+    OWNER = {
+        text = "SKYARC OWNER",
+        color = Color3.fromRGB(0, 150, 255), 
+        textColor = Color3.fromRGB(255, 255, 255),
+        glowColor = Color3.fromRGB(100, 200, 255),
+        particleColor = Color3.fromRGB(180, 220, 255),
+        logoImage = "rbxassetid://82795327169782", 
+        fontSize = 25,
+        tagSize = UDim2.new(0, 280, 0, 55),
+        particleRate = 6, 
+        verticalOffset = Vector3.new(0, 3, 0)
+    },
+    USER = {
+        text = "SKYARC USER",
+        color = Color3.fromRGB(80, 160, 255), 
+        textColor = Color3.fromRGB(220, 240, 255),
+        glowColor = Color3.fromRGB(140, 200, 255),
+        particleColor = Color3.fromRGB(200, 230, 255),
+        logoImage = "rbxassetid://82795327169782", 
+        fontSize = 22,
+        tagSize = UDim2.new(0, 250, 0, 50),
+        particleRate = 3, 
+        verticalOffset = Vector3.new(0, 2.8, 0)
+    }
+}
+
+local function getPlayerRank(username)
+    for _, ownerName in ipairs(OWNER_USERNAMES) do
+        if string.lower(username) == string.lower(ownerName) then
+            return "OWNER"
+        end
+    end
+    return "USER"
+end
+
+local function createTag(char)
+    local head = char:WaitForChild("Head")
+    
+    local oldTag = head:FindFirstChild("SkyarcRankTag")
+    if oldTag then
+        oldTag:Destroy()
+    end
+    
+    local playerRank = getPlayerRank(player.Name)
+    local rankData = RANK_DATA[playerRank]
+    
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "SkyarcRankTag"
+    billboard.Adornee = head
+    billboard.Size = rankData.tagSize
+    billboard.StudsOffsetWorldSpace = rankData.verticalOffset
+    billboard.LightInfluence = 0
+    billboard.AlwaysOnTop = true
+    billboard.MaxDistance = 300
+    billboard.Parent = head
+    
+    local frame = Instance.new("Frame")
+    frame.Name = "MainFrame"
+    frame.Size = UDim2.new(1, 0, 1, 0)
+    frame.BackgroundColor3 = Color3.fromRGB(10, 15, 25) 
+    frame.BackgroundTransparency = 0.15
+    frame.BorderSizePixel = 0
+    frame.Parent = billboard
+    
+    local uicorner = Instance.new("UICorner")
+    uicorner.CornerRadius = UDim.new(0, 12)
+    uicorner.Parent = frame
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = 3.5
+    stroke.Color = rankData.color
+    stroke.Transparency = 0.2
+    stroke.Parent = frame
+    
+    local grad = Instance.new("UIGradient")
+    grad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, rankData.color),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 40, 60)), 
+        ColorSequenceKeypoint.new(1, rankData.color)
+    })
+    grad.Rotation = 45
+    grad.Parent = frame
+    
+    local logo = Instance.new("ImageLabel")
+    logo.Name = "Logo"
+    logo.Size = UDim2.new(0, 42, 0, 42)
+    logo.Position = UDim2.new(0, 6, 0.5, -21)
+    logo.BackgroundTransparency = 1
+    logo.Image = rankData.logoImage
+    logo.ImageColor3 = Color3.fromRGB(255, 255, 255)
+    logo.Parent = frame
+    
+    local logoCorner = Instance.new("UICorner")
+    logoCorner.CornerRadius = UDim.new(0, 8)
+    logoCorner.Parent = logo
+    
+    local logoStroke = Instance.new("UIStroke")
+    logoStroke.Thickness = 1.5
+    logoStroke.Color = rankData.glowColor
+    logoStroke.Transparency = 0.3
+    logoStroke.Parent = logo
+    
+    local rankLabel = Instance.new("TextLabel")
+    rankLabel.Name = "RankLabel"
+    rankLabel.Size = UDim2.new(0, 140, 0, 32)
+    rankLabel.Position = UDim2.new(0.22, 0, 0.15, 0)
+    rankLabel.BackgroundTransparency = 1
+    rankLabel.Font = Enum.Font.GothamBold
+    rankLabel.Text = rankData.text
+    rankLabel.TextColor3 = rankData.textColor
+    rankLabel.TextSize = rankData.fontSize
+    rankLabel.TextXAlignment = Enum.TextXAlignment.Left
+    rankLabel.TextStrokeTransparency = 0.8
+    rankLabel.TextStrokeColor3 = rankData.color
+    rankLabel.Parent = frame
+    
+    local username = player.Name
+    local userLabel = Instance.new("TextLabel")
+    userLabel.Name = "UserLabel"
+    userLabel.Size = UDim2.new(0, 140, 0, 18)
+    userLabel.Position = UDim2.new(0.22, 0, 0.6, 0)
+    userLabel.BackgroundTransparency = 1
+    userLabel.Font = Enum.Font.GothamSemibold
+    userLabel.Text = "@" .. username
+    userLabel.TextColor3 = Color3.fromRGB(200, 220, 255) 
+    userLabel.TextSize = 15
+    userLabel.TextXAlignment = Enum.TextXAlignment.Left
+    userLabel.Parent = frame
+    
+    local userGlow = Instance.new("UIStroke")
+    userGlow.Thickness = 1
+    userGlow.Color = rankData.glowColor
+    userGlow.Transparency = 0.7
+    userGlow.Parent = userLabel
+    
+    local particles = Instance.new("Folder")
+    particles.Name = "Particles"
+    particles.Parent = frame
+    
+    local function spawnParticle()
+        local dot = Instance.new("Frame")
+        dot.Name = "ParticleDot"
+        local size = math.random(2, 5)
+        dot.Size = UDim2.new(0, size, 0, size)
+        
+        local startX = math.random(5, 95) / 100
+        dot.Position = UDim2.new(startX, math.random(-5, 5), 1, math.random(-5, 0))
+        
+        local r, g, b = rankData.particleColor.R, rankData.particleColor.G, rankData.particleColor.B
+        dot.BackgroundColor3 = Color3.fromRGB(
+            math.min(255, (r * 255) + math.random(-30, 30)),
+            math.min(255, (g * 255) + math.random(-20, 40)),
+            math.min(255, (b * 255) + math.random(-10, 50))
+        )
+        
+        dot.BackgroundTransparency = 0.6 + math.random() * 0.3
+        dot.BorderSizePixel = 0
+        dot.ZIndex = 1
+        
+        local dotCorner = Instance.new("UICorner")
+        dotCorner.CornerRadius = UDim.new(1, 0)
+        dotCorner.Parent = dot
+        
+        dot.Parent = particles
+        
+        local duration = 1.8 + math.random() * 1.2
+        local targetXOffset = (math.random(-15, 15) / 100)
+        local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+        local targetPos = UDim2.new(dot.Position.X.Scale + targetXOffset, 0, -0.4, 0)
+        
+        local tween = TweenService:Create(dot, tweenInfo, {
+            Position = targetPos,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(0, size * 0.5, 0, size * 0.5)
+        })
+        
+        tween:Play()
+        tween.Completed:Connect(function()
+            dot:Destroy()
+        end)
+    end
+    
+    local heartbeatConn
+    heartbeatConn = RunService.Heartbeat:Connect(function()
+        if math.random(1, rankData.particleRate) == 1 then
+            spawnParticle()
+        end
+        
+        local time = tick()
+        local floatOffset = math.sin(time * 2) * 0.1
+        billboard.StudsOffsetWorldSpace = rankData.verticalOffset + Vector3.new(0, floatOffset, 0)
+        
+        local pulse = (math.sin(time * 1.5) + 1) / 2
+        stroke.Transparency = 0.2 - (pulse * 0.1)
+        
+        logoStroke.Transparency = 0.3 - (pulse * 0.15)
+    end)
+    
+    char.AncestryChanged:Connect(function()
+        if not char.Parent and heartbeatConn then
+            heartbeatConn:Disconnect()
+        end
+    end)
+    
+    spawn(function()
+        while billboard and billboard.Parent do
+            wait(0.1)
+        end
+    end)
+end
+
+if player.Character then
+    createTag(player.Character)
+end
+
+player.CharacterAdded:Connect(createTag)
