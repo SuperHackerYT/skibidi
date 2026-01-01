@@ -1,0 +1,399 @@
+local UI = {}
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+
+local screenGui, mainFrame, contentFrame, tabsFrame
+local currentTab = nil
+local tabs = {}
+local buttonsPerPage = 9
+
+local LMG2L = {}
+
+LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
+LMG2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
+
+LMG2L["Frame_2"] = Instance.new("Frame", LMG2L["ScreenGui_1"])
+LMG2L["Frame_2"]["BorderSizePixel"] = 0
+LMG2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["Frame_2"]["Size"] = UDim2.new(0.49674, 0, 0.55255, 0)
+LMG2L["Frame_2"]["Position"] = UDim2.new(0.24837, 0, 0.13814, 0)
+LMG2L["Frame_2"]["BackgroundTransparency"] = 0.45
+
+LMG2L["UICorner_3"] = Instance.new("UICorner", LMG2L["Frame_2"])
+LMG2L["UICorner_3"]["CornerRadius"] = UDim.new(0, 12)
+
+LMG2L["Frame2_4"] = Instance.new("Frame", LMG2L["Frame_2"])
+LMG2L["Frame2_4"]["BorderSizePixel"] = 0
+LMG2L["Frame2_4"]["BackgroundColor3"] = Color3.fromRGB(51, 91, 255)
+LMG2L["Frame2_4"]["Size"] = UDim2.new(0.844, 0, 0.99333, 0)
+LMG2L["Frame2_4"]["Position"] = UDim2.new(0.152, 0, 0, 0)
+LMG2L["Frame2_4"]["Name"] = "Frame2"
+LMG2L["Frame2_4"]["BackgroundTransparency"] = 0.5
+
+local buttonInstances = {}
+
+local buttonConfigs = {
+    {name = "TextButton_11", x = 0.03555, y = 0.05034},
+    {name = "TextButton2_b", x = 0.35545, y = 0.05034},
+    {name = "TextButton3_17", x = 0.67536, y = 0.05034},
+    {name = "TextButton4_14", x = 0.03555, y = 0.30201},
+    {name = "TextButton5_21", x = 0.35545, y = 0.30201},
+    {name = "TextButton6_1b", x = 0.67536, y = 0.30201},
+    {name = "TextButton7_8", x = 0.03555, y = 0.55369},
+    {name = "TextButton8_e", x = 0.35545, y = 0.55369},
+    {name = "TextButton9_5", x = 0.67536, y = 0.55369}
+}
+
+for _, config in ipairs(buttonConfigs) do
+    local btn = Instance.new("TextButton", LMG2L["Frame2_4"])
+    btn.Name = config.name
+    btn.BorderSizePixel = 0
+    btn.TextSize = 14
+    btn.TextColor3 = Color3.fromRGB(0, 0, 0)
+    btn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.FredokaOne
+    btn.Size = UDim2.new(0.27251, 0, 0.18456, 0)
+    btn.Position = UDim2.new(config.x, 0, config.y, 0)
+    btn.Text = ""
+    btn.Visible = false
+    btn.AutoButtonColor = false
+    
+    local corner = Instance.new("UICorner")
+    corner.Parent = btn
+    
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(31, 166, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(36, 96, 176))
+    }
+    gradient.Parent = btn
+    
+    buttonInstances[config.name] = btn
+end
+
+LMG2L["UICorner_1a"] = Instance.new("UICorner", LMG2L["Frame2_4"])
+LMG2L["UICorner_1a"]["CornerRadius"] = UDim.new(0, 12)
+
+LMG2L["PagePrev_1e"] = Instance.new("TextButton", LMG2L["Frame2_4"])
+LMG2L["PagePrev_1e"]["BorderSizePixel"] = 0
+LMG2L["PagePrev_1e"]["TextSize"] = 14
+LMG2L["PagePrev_1e"]["TextColor3"] = Color3.fromRGB(0, 0, 0)
+LMG2L["PagePrev_1e"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["PagePrev_1e"]["Font"] = Enum.Font.FredokaOne
+LMG2L["PagePrev_1e"]["Size"] = UDim2.new(0.21327, 0, 0.11409, 0)
+LMG2L["PagePrev_1e"]["Text"] = "Previous"
+LMG2L["PagePrev_1e"]["Name"] = "PagePrev"
+LMG2L["PagePrev_1e"]["Position"] = UDim2.new(0.0237, 0, 0.8557, 0)
+LMG2L["PagePrev_1e"]["Visible"] = false
+
+LMG2L["UICorner_1f"] = Instance.new("UICorner", LMG2L["PagePrev_1e"])
+
+LMG2L["UIGradient_20"] = Instance.new("UIGradient", LMG2L["PagePrev_1e"])
+LMG2L["UIGradient_20"]["Color"] = ColorSequence.new{
+    ColorSequenceKeypoint.new(0.000, Color3.fromRGB(31, 166, 255)),
+    ColorSequenceKeypoint.new(1.000, Color3.fromRGB(36, 96, 176))
+}
+
+LMG2L["PageNext_27"] = Instance.new("TextButton", LMG2L["Frame2_4"])
+LMG2L["PageNext_27"]["BorderSizePixel"] = 0
+LMG2L["PageNext_27"]["TextSize"] = 14
+LMG2L["PageNext_27"]["TextColor3"] = Color3.fromRGB(0, 0, 0)
+LMG2L["PageNext_27"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["PageNext_27"]["Font"] = Enum.Font.FredokaOne
+LMG2L["PageNext_27"]["Size"] = UDim2.new(0.21327, 0, 0.11409, 0)
+LMG2L["PageNext_27"]["Text"] = "Next"
+LMG2L["PageNext_27"]["Name"] = "PageNext"
+LMG2L["PageNext_27"]["Position"] = UDim2.new(0.77014, 0, 0.8557, 0)
+LMG2L["PageNext_27"]["Visible"] = false
+
+LMG2L["UICorner_28"] = Instance.new("UICorner", LMG2L["PageNext_27"])
+
+LMG2L["UIGradient_29"] = Instance.new("UIGradient", LMG2L["PageNext_27"])
+LMG2L["UIGradient_29"]["Color"] = ColorSequence.new{
+    ColorSequenceKeypoint.new(0.000, Color3.fromRGB(31, 166, 255)),
+    ColorSequenceKeypoint.new(1.000, Color3.fromRGB(36, 96, 176))
+}
+
+LMG2L["UIDragDetector_2a"] = Instance.new("UIDragDetector", LMG2L["Frame_2"])
+
+LMG2L["UIGradient_2b"] = Instance.new("UIGradient", LMG2L["Frame_2"])
+LMG2L["UIGradient_2b"]["Color"] = ColorSequence.new{
+    ColorSequenceKeypoint.new(0.000, Color3.fromRGB(92, 140, 255)),
+    ColorSequenceKeypoint.new(1.000, Color3.fromRGB(29, 95, 255))
+}
+
+LMG2L["Frame_2c"] = Instance.new("Frame", LMG2L["Frame_2"])
+LMG2L["Frame_2c"]["BorderSizePixel"] = 0
+LMG2L["Frame_2c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["Frame_2c"]["Size"] = UDim2.new(0.15, 0, 1, 0)
+LMG2L["Frame_2c"]["BackgroundTransparency"] = 0.2
+
+LMG2L["ImageLabel_32"] = Instance.new("ImageLabel", LMG2L["Frame_2c"])
+LMG2L["ImageLabel_32"]["BorderSizePixel"] = 0
+LMG2L["ImageLabel_32"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["ImageLabel_32"]["Image"] = "rbxassetid://82795327169782"
+LMG2L["ImageLabel_32"]["Size"] = UDim2.new(0.66667, 0, 0.16667, 0)
+LMG2L["ImageLabel_32"]["BackgroundTransparency"] = 1
+LMG2L["ImageLabel_32"]["Position"] = UDim2.new(0.13333, 0, 0.03333, 0)
+
+LMG2L["TabButton_2f"] = Instance.new("TextButton", LMG2L["Frame_2c"])
+LMG2L["TabButton_2f"]["BorderSizePixel"] = 0
+LMG2L["TabButton_2f"]["TextSize"] = 24
+LMG2L["TabButton_2f"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["TabButton_2f"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["TabButton_2f"]["Font"] = Enum.Font.FredokaOne
+LMG2L["TabButton_2f"]["BackgroundTransparency"] = 1
+LMG2L["TabButton_2f"]["Size"] = UDim2.new(0.96, 0, 0.16667, 0)
+LMG2L["TabButton_2f"]["Name"] = "TabButton"
+LMG2L["TabButton_2f"]["Position"] = UDim2.new(0.02667, 0, 0.23333, 0)
+LMG2L["TabButton_2f"]["Text"] = ""
+LMG2L["TabButton_2f"]["Visible"] = false
+
+LMG2L["UICorner_30"] = Instance.new("UICorner", LMG2L["TabButton_2f"])
+
+LMG2L["TabButton2_33"] = Instance.new("TextButton", LMG2L["Frame_2c"])
+LMG2L["TabButton2_33"]["BorderSizePixel"] = 0
+LMG2L["TabButton2_33"]["TextSize"] = 24
+LMG2L["TabButton2_33"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["TabButton2_33"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["TabButton2_33"]["Font"] = Enum.Font.FredokaOne
+LMG2L["TabButton2_33"]["BackgroundTransparency"] = 1
+LMG2L["TabButton2_33"]["Size"] = UDim2.new(0.96, 0, 0.16667, 0)
+LMG2L["TabButton2_33"]["Name"] = "TabButton2"
+LMG2L["TabButton2_33"]["Position"] = UDim2.new(0.02667, 0, 0.46667, 0)
+LMG2L["TabButton2_33"]["Visible"] = false
+
+LMG2L["UICorner_34"] = Instance.new("UICorner", LMG2L["TabButton2_33"])
+
+LMG2L["TabButton3_2d"] = Instance.new("TextButton", LMG2L["Frame_2c"])
+LMG2L["TabButton3_2d"]["BorderSizePixel"] = 0
+LMG2L["TabButton3_2d"]["TextSize"] = 24
+LMG2L["TabButton3_2d"]["TextColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["TabButton3_2d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255)
+LMG2L["TabButton3_2d"]["Font"] = Enum.Font.FredokaOne
+LMG2L["TabButton3_2d"]["BackgroundTransparency"] = 1
+LMG2L["TabButton3_2d"]["Size"] = UDim2.new(0.96, 0, 0.16667, 0)
+LMG2L["TabButton3_2d"]["Name"] = "TabButton3"
+LMG2L["TabButton3_2d"]["Position"] = UDim2.new(0.02667, 0, 0.7, 0)
+LMG2L["TabButton3_2d"]["Visible"] = false
+
+LMG2L["UICorner_2e"] = Instance.new("UICorner", LMG2L["TabButton3_2d"])
+
+LMG2L["UICorner_31"] = Instance.new("UICorner", LMG2L["Frame_2c"])
+LMG2L["UICorner_31"]["CornerRadius"] = UDim.new(0, 12)
+
+LMG2L["UIGradient_35"] = Instance.new("UIGradient", LMG2L["Frame_2c"])
+LMG2L["UIGradient_35"]["Color"] = ColorSequence.new{
+    ColorSequenceKeypoint.new(0.000, Color3.fromRGB(41, 161, 255)),
+    ColorSequenceKeypoint.new(1.000, Color3.fromRGB(36, 44, 255))
+}
+
+LMG2L["UIAspectRatioConstraint_36"] = Instance.new("UIAspectRatioConstraint", LMG2L["Frame_2"])
+LMG2L["UIAspectRatioConstraint_36"]["AspectRatio"] = 1.66667
+
+screenGui = LMG2L["ScreenGui_1"]
+mainFrame = LMG2L["Frame_2"]
+contentFrame = LMG2L["Frame2_4"]
+tabsFrame = LMG2L["Frame_2c"]
+
+local tabButtons = {
+    LMG2L["TabButton_2f"],
+    LMG2L["TabButton2_33"], 
+    LMG2L["TabButton3_2d"]
+}
+
+local buttonOrder = {
+    "TextButton_11", "TextButton2_b", "TextButton3_17",
+    "TextButton4_14", "TextButton5_21", "TextButton6_1b",
+    "TextButton7_8", "TextButton8_e", "TextButton9_5"
+}
+
+local function setupButton(button, buttonData)
+    button.Text = buttonData.text
+    button.Visible = true
+    
+    for _, conn in ipairs(getconnections(button.MouseButton1Click) or {}) do
+        conn:Disconnect()
+    end
+    
+    button.MouseButton1Click:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(100, 180, 255)
+        buttonData.callback()
+        task.wait(0.1)
+        button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    end)
+end
+
+local function refreshTabDisplay(tabName)
+    local tabData = tabs[tabName]
+    if not tabData then return end
+    
+    for _, btnName in ipairs(buttonOrder) do
+        local btn = buttonInstances[btnName]
+        if btn then
+            btn.Visible = false
+            btn.Text = ""
+        end
+    end
+    
+    local currentPage = tabData.pages[tabData.currentPage]
+    if currentPage then
+        for i, buttonData in ipairs(currentPage) do
+            if i <= 9 then
+                local btnName = buttonOrder[i]
+                local btn = buttonInstances[btnName]
+                if btn then
+                    setupButton(btn, buttonData)
+                end
+            end
+        end
+    end
+    
+    LMG2L["PagePrev_1e"].Visible = tabData.currentPage > 1
+    LMG2L["PageNext_27"].Visible = tabData.currentPage < #tabData.pages
+    
+    for _, tabBtn in ipairs(tabButtons) do
+        if tabBtn.Visible then
+            if tabBtn.Text == tabName then
+                tabBtn.TextColor3 = Color3.fromRGB(255, 255, 0)
+            else
+                tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+        end
+    end
+end
+
+local function switchTab(tabName)
+    if tabs[tabName] then
+        currentTab = tabName
+        refreshTabDisplay(tabName)
+    end
+end
+
+LMG2L["PagePrev_1e"].MouseButton1Click:Connect(function()
+    local tabData = tabs[currentTab]
+    if tabData and tabData.currentPage > 1 then
+        tabData.currentPage = tabData.currentPage - 1
+        refreshTabDisplay(currentTab)
+    end
+end)
+
+LMG2L["PageNext_27"].MouseButton1Click:Connect(function()
+    local tabData = tabs[currentTab]
+    if tabData and tabData.currentPage < #tabData.pages then
+        tabData.currentPage = tabData.currentPage + 1
+        refreshTabDisplay(currentTab)
+    end
+end)
+
+local dragging = false
+local dragStart, startPos
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+    end
+end)
+
+mainFrame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+function UI:AddTab(config)
+    local tabName = config.Name or "Tab"
+    
+    for _, tabBtn in ipairs(tabButtons) do
+        if not tabBtn.Visible then
+            tabBtn.Text = tabName
+            tabBtn.Visible = true
+            
+            tabBtn.MouseButton1Click:Connect(function()
+                switchTab(tabName)
+            end)
+            
+            tabs[tabName] = {
+                name = tabName,
+                button = tabBtn,
+                pages = {{}},
+                currentPage = 1,
+                allButtons = {}
+            }
+            
+            local tabMethods = {}
+            
+            tabMethods.AddButton = function(self, btnConfig)
+                local buttonName = btnConfig.Name or "Button"
+                local callback = btnConfig.Callback or function() end
+                
+                local tabData = tabs[tabName]
+                
+                local buttonData = {
+                    text = buttonName,
+                    callback = callback
+                }
+                
+                table.insert(tabData.allButtons, buttonData)
+                
+                local totalButtons = #tabData.allButtons
+                local targetPage = math.ceil(totalButtons / buttonsPerPage)
+                
+                while #tabData.pages < targetPage do
+                    table.insert(tabData.pages, {})
+                end
+                
+                local pageIndex = ((totalButtons - 1) % buttonsPerPage) + 1
+                tabData.pages[targetPage][pageIndex] = buttonData
+                
+                if not currentTab then
+                    currentTab = tabName
+                    refreshTabDisplay(tabName)
+                end
+                
+                if currentTab == tabName and tabData.currentPage == targetPage then
+                    refreshTabDisplay(tabName)
+                end
+                
+                return self
+            end
+            
+            UI[tabName] = tabMethods
+            
+            if not currentTab then
+                currentTab = tabName
+                switchTab(tabName)
+            end
+            
+            return tabMethods
+        end
+    end
+    
+    warn("No tab slots available")
+    return nil
+end
+
+function UI:Show()
+    screenGui.Enabled = true
+end
+
+function UI:Hide()
+    screenGui.Enabled = false
+end
+
+return UI
