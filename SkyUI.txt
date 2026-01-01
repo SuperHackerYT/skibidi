@@ -12,7 +12,7 @@ local buttonsPerPage = 9
 
 local LMG2L = {}
 
-LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
+LMG2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("CoreGui"))
 LMG2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
 
 LMG2L["Frame_2"] = Instance.new("Frame", LMG2L["ScreenGui_1"])
