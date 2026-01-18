@@ -1,11 +1,10 @@
--- LiquidGlass UI Library - Complete Version
 local LiquidGlass = {}
 LiquidGlass.__index = LiquidGlass
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
--- Theme colors
 local TH = {
     Txt = Color3.fromRGB(235, 235, 235),
     Ttl = Color3.fromRGB(255, 255, 255),
@@ -85,19 +84,19 @@ function LiquidGlass:CreateWindow(title, options)
     
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "MainWindow"
-    mainFrame.Size = UDim2.new(0, options.Width or 500, 0, options.Height or 550)
-    mainFrame.Position = UDim2.new(0.5, -(options.Width or 500)/2, 0.5, -(options.Height or 550)/2)
+    mainFrame.Size = UDim2.new(0, options.Width or 450, 0, options.Height or 500)
+    mainFrame.Position = UDim2.new(0.5, -(options.Width or 450)/2, 0.5, -(options.Height or 500)/2)
     mainFrame.BackgroundColor3 = TH.Bg1
     mainFrame.BackgroundTransparency = 0.65
     mainFrame.ZIndex = 10
     mainFrame.Parent = screenGui
     
-    createRoundedCorners(mainFrame, 24)
+    createRoundedCorners(mainFrame, 20)
     local glassEffects = addGlassEffect(mainFrame)
     
     local header = Instance.new("Frame")
     header.Name = "Header"
-    header.Size = UDim2.new(1, 0, 0, 50)
+    header.Size = UDim2.new(1, 0, 0, 40)
     header.BackgroundTransparency = 1
     header.ZIndex = 11
     header.Parent = mainFrame
@@ -106,30 +105,62 @@ function LiquidGlass:CreateWindow(title, options)
     titleLabel.Name = "Title"
     titleLabel.Text = title or "Liquid Glass UI"
     titleLabel.Font = Enum.Font.GothamSemibold
-    titleLabel.TextSize = 22
+    titleLabel.TextSize = 18
     titleLabel.TextColor3 = TH.Ttl
     titleLabel.BackgroundTransparency = 1
-    titleLabel.Size = UDim2.new(1, -120, 1, 0)
-    titleLabel.Position = UDim2.new(0, 20, 0, 0)
+    titleLabel.Size = UDim2.new(1, -100, 1, 0)
+    titleLabel.Position = UDim2.new(0, 15, 0, 0)
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.ZIndex = 12
     titleLabel.Parent = header
+    
+    local buttonContainer = Instance.new("Frame")
+    buttonContainer.Name = "ButtonContainer"
+    buttonContainer.Size = UDim2.new(0, 80, 1, 0)
+    buttonContainer.Position = UDim2.new(1, -85, 0, 0)
+    buttonContainer.BackgroundTransparency = 1
+    buttonContainer.ZIndex = 12
+    buttonContainer.Parent = header
+    
+    local buttonLayout = Instance.new("UIListLayout")
+    buttonLayout.FillDirection = Enum.FillDirection.Horizontal
+    buttonLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    buttonLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    buttonLayout.Padding = UDim.new(0, 8)
+    buttonLayout.Parent = buttonContainer
+    
+    local minimizeButton = Instance.new("TextButton")
+    minimizeButton.Name = "Minimize"
+    minimizeButton.Text = "─"
+    minimizeButton.Font = Enum.Font.GothamBold
+    minimizeButton.TextSize = 20
+    minimizeButton.TextColor3 = TH.Txt
+    minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    minimizeButton.BackgroundColor3 = TH.Btn0
+    minimizeButton.BackgroundTransparency = 0.06
+    minimizeButton.ZIndex = 13
+    minimizeButton.Parent = buttonContainer
+    
+    createRoundedCorners(minimizeButton, 8)
+    local minStroke = Instance.new("UIStroke")
+    minStroke.Color = TH.St0
+    minStroke.Transparency = 0.78
+    minStroke.Thickness = 1
+    minStroke.Parent = minimizeButton
     
     local closeButton = Instance.new("TextButton")
     closeButton.Name = "Close"
     closeButton.Text = "×"
     closeButton.Font = Enum.Font.GothamBold
-    closeButton.TextSize = 26
+    closeButton.TextSize = 22
     closeButton.TextColor3 = TH.Txt
-    closeButton.Size = UDim2.new(0, 36, 0, 36)
-    closeButton.Position = UDim2.new(1, -48, 0.5, -18)
-    closeButton.AnchorPoint = Vector2.new(0, 0.5)
+    closeButton.Size = UDim2.new(0, 30, 0, 30)
     closeButton.BackgroundColor3 = TH.Btn0
     closeButton.BackgroundTransparency = 0.06
-    closeButton.ZIndex = 12
-    closeButton.Parent = header
+    closeButton.ZIndex = 13
+    closeButton.Parent = buttonContainer
     
-    createRoundedCorners(closeButton, 12)
+    createRoundedCorners(closeButton, 8)
     local closeStroke = Instance.new("UIStroke")
     closeStroke.Color = TH.St0
     closeStroke.Transparency = 0.78
@@ -148,10 +179,22 @@ function LiquidGlass:CreateWindow(title, options)
         }):Play()
     end)
     
+    minimizeButton.MouseEnter:Connect(function()
+        TweenService:Create(minimizeButton, TweenInfo.new(0.12), {
+            BackgroundColor3 = TH.Accent
+        }):Play()
+    end)
+    
+    minimizeButton.MouseLeave:Connect(function()
+        TweenService:Create(minimizeButton, TweenInfo.new(0.12), {
+            BackgroundColor3 = TH.Btn0
+        }):Play()
+    end)
+    
     local content = Instance.new("ScrollingFrame")
     content.Name = "Content"
-    content.Size = UDim2.new(1, -40, 1, -90)
-    content.Position = UDim2.new(0, 20, 0, 70)
+    content.Size = UDim2.new(1, -30, 1, -80)
+    content.Position = UDim2.new(0, 15, 0, 55)
     content.BackgroundTransparency = 1
     content.BorderSizePixel = 0
     content.ScrollBarThickness = 6
@@ -159,7 +202,7 @@ function LiquidGlass:CreateWindow(title, options)
     content.Parent = mainFrame
     
     local contentLayout = Instance.new("UIListLayout")
-    contentLayout.Padding = UDim.new(0, 14)
+    contentLayout.Padding = UDim.new(0, 12)
     contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
     contentLayout.Parent = content
     
@@ -171,18 +214,84 @@ function LiquidGlass:CreateWindow(title, options)
     content.AutomaticCanvasSize = Enum.AutomaticSize.Y
     content.CanvasSize = UDim2.new()
     
+    local minimizedBall = Instance.new("Frame")
+    minimizedBall.Name = "MinimizedBall"
+    minimizedBall.Size = UDim2.new(0, 60, 0, 60)
+    minimizedBall.Position = mainFrame.Position
+    minimizedBall.BackgroundColor3 = TH.Bg1
+    minimizedBall.BackgroundTransparency = 0.65
+    minimizedBall.ZIndex = 10
+    minimizedBall.Visible = false
+    minimizedBall.Parent = screenGui
+    
+    createRoundedCorners(minimizedBall, 30)
+    local ballGlass = addGlassEffect(minimizedBall)
+    
+    local ballIcon = Instance.new("TextLabel")
+    ballIcon.Name = "Icon"
+    ballIcon.Text = "◎"
+    ballIcon.Font = Enum.Font.GothamSemibold
+    ballIcon.TextSize = 24
+    ballIcon.TextColor3 = TH.Ttl
+    ballIcon.BackgroundTransparency = 1
+    ballIcon.Size = UDim2.new(1, 0, 1, 0)
+    ballIcon.ZIndex = 11
+    ballIcon.Parent = minimizedBall
+    
+    local minimized = false
+    
+    local function toggleMinimize()
+        minimized = not minimized
+        
+        if minimized then
+            TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+                Size = UDim2.new(0, 0, 0, 0),
+                BackgroundTransparency = 1
+            }):Play()
+            
+            minimizedBall.Position = mainFrame.Position
+            minimizedBall.Visible = true
+            minimizedBall.Size = UDim2.new(0, 0, 0, 0)
+            
+            TweenService:Create(minimizedBall, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Size = UDim2.new(0, 60, 0, 60)
+            }):Play()
+        else
+            TweenService:Create(minimizedBall, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+                Size = UDim2.new(0, 0, 0, 0)
+            }):Play()
+            
+            task.delay(0.15, function()
+                minimizedBall.Visible = false
+                TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                    Size = UDim2.new(0, options.Width or 450, 0, options.Height or 500),
+                    BackgroundTransparency = 0.65
+                }):Play()
+            end)
+        end
+    end
+    
+    minimizeButton.MouseButton1Click:Connect(toggleMinimize)
+    
+    minimizedBall.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            toggleMinimize()
+        end
+    end)
+    
     local window = {
         ScreenGui = screenGui,
         MainFrame = mainFrame,
         Content = content,
-        CloseButton = closeButton
+        MinimizedBall = minimizedBall,
+        Minimized = minimized
     }
     
     setmetatable(window, LiquidGlass)
     
     mainFrame.Size = UDim2.new(0, 0, 0, 0)
     TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, options.Width or 500, 0, options.Height or 550)
+        Size = UDim2.new(0, options.Width or 450, 0, options.Height or 500)
     }):Play()
     
     closeButton.MouseButton1Click:Connect(function()
@@ -191,9 +300,11 @@ function LiquidGlass:CreateWindow(title, options)
             BackgroundTransparency = 1
         }):Play()
         
-        TweenService:Create(glassEffects.stroke, TweenInfo.new(0.2), {
-            Transparency = 1
-        }):Play()
+        if minimizedBall.Visible then
+            TweenService:Create(minimizedBall, TweenInfo.new(0.2), {
+                Size = UDim2.new(0, 0, 0, 0)
+            }):Play()
+        end
         
         task.delay(0.2, function()
             screenGui:Destroy()
@@ -206,10 +317,11 @@ function LiquidGlass:CreateWindow(title, options)
     local function update(input)
         local delta = input.Position - dragStart
         mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        minimizedBall.Position = mainFrame.Position
     end
     
     header.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = mainFrame.Position
@@ -223,7 +335,7 @@ function LiquidGlass:CreateWindow(title, options)
     end)
     
     header.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+        if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragging then
             dragInput = input
         end
     end)
@@ -231,6 +343,26 @@ function LiquidGlass:CreateWindow(title, options)
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             update(input)
+        end
+    end)
+    
+    minimizedBall.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = minimizedBall.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    
+    minimizedBall.InputChanged:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragging then
+            dragInput = input
         end
     end)
     
@@ -243,7 +375,7 @@ function LiquidGlass:CreateButton(text, options)
     local buttonFrame = Instance.new("Frame")
     buttonFrame.Name = "ButtonContainer"
     buttonFrame.BackgroundTransparency = 1
-    buttonFrame.Size = UDim2.new(1, 0, 0, options.Height or 40)
+    buttonFrame.Size = UDim2.new(1, 0, 0, options.Height or 38)
     buttonFrame.LayoutOrder = options.LayoutOrder or 1
     buttonFrame.ZIndex = self.Content.ZIndex + 1
     buttonFrame.Parent = self.Content
@@ -258,7 +390,7 @@ function LiquidGlass:CreateButton(text, options)
     button.ZIndex = buttonFrame.ZIndex + 1
     button.Parent = buttonFrame
     
-    createRoundedCorners(button, 16)
+    createRoundedCorners(button, 14)
     
     local stroke = Instance.new("UIStroke")
     stroke.Color = TH.St0
@@ -273,8 +405,8 @@ function LiquidGlass:CreateButton(text, options)
     textLabel.TextSize = 14
     textLabel.TextColor3 = TH.Txt
     textLabel.BackgroundTransparency = 1
-    textLabel.Size = UDim2.new(1, -24, 1, 0)
-    textLabel.Position = UDim2.new(0, 12, 0, 0)
+    textLabel.Size = UDim2.new(1, -20, 1, 0)
+    textLabel.Position = UDim2.new(0, 10, 0, 0)
     textLabel.TextXAlignment = Enum.TextXAlignment.Left
     textLabel.ZIndex = button.ZIndex + 1
     textLabel.Parent = button
@@ -340,7 +472,7 @@ function LiquidGlass:CreateTextBox(placeholder, options)
     local textBoxFrame = Instance.new("Frame")
     textBoxFrame.Name = "TextBoxContainer"
     textBoxFrame.BackgroundTransparency = 1
-    textBoxFrame.Size = UDim2.new(1, 0, 0, 44)
+    textBoxFrame.Size = UDim2.new(1, 0, 0, 40)
     textBoxFrame.LayoutOrder = options.LayoutOrder or 1
     textBoxFrame.ZIndex = self.Content.ZIndex + 1
     textBoxFrame.Parent = self.Content
@@ -360,7 +492,7 @@ function LiquidGlass:CreateTextBox(placeholder, options)
     textBox.ZIndex = textBoxFrame.ZIndex + 1
     textBox.Parent = textBoxFrame
     
-    createRoundedCorners(textBox, 16)
+    createRoundedCorners(textBox, 14)
     
     local stroke = Instance.new("UIStroke")
     stroke.Color = TH.St0
@@ -401,7 +533,7 @@ function LiquidGlass:CreateToggle(text, default, options)
     local toggleFrame = Instance.new("Frame")
     toggleFrame.Name = "ToggleContainer"
     toggleFrame.BackgroundTransparency = 1
-    toggleFrame.Size = UDim2.new(1, 0, 0, 36)
+    toggleFrame.Size = UDim2.new(1, 0, 0, 34)
     toggleFrame.LayoutOrder = options.LayoutOrder or 1
     toggleFrame.ZIndex = self.Content.ZIndex + 1
     toggleFrame.Parent = self.Content
@@ -411,14 +543,14 @@ function LiquidGlass:CreateToggle(text, default, options)
     toggle.Text = ""
     toggle.BackgroundColor3 = default and TH.Ok0 or TH.Btn0
     toggle.BackgroundTransparency = 0.08
-    toggle.Size = UDim2.new(0, 50, 0, 28)
-    toggle.Position = UDim2.new(1, -10, 0.5, -14)
+    toggle.Size = UDim2.new(0, 48, 0, 24)
+    toggle.Position = UDim2.new(1, -10, 0.5, -12)
     toggle.AnchorPoint = Vector2.new(1, 0.5)
     toggle.AutoButtonColor = false
     toggle.ZIndex = toggleFrame.ZIndex + 1
     toggle.Parent = toggleFrame
     
-    createRoundedCorners(toggle, 14)
+    createRoundedCorners(toggle, 12)
     
     local stroke = Instance.new("UIStroke")
     stroke.Color = TH.St0
@@ -429,13 +561,13 @@ function LiquidGlass:CreateToggle(text, default, options)
     local toggleCircle = Instance.new("Frame")
     toggleCircle.Name = "Circle"
     toggleCircle.BackgroundColor3 = TH.Txt
-    toggleCircle.Size = UDim2.new(0, 20, 0, 20)
-    toggleCircle.Position = default and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+    toggleCircle.Size = UDim2.new(0, 16, 0, 16)
+    toggleCircle.Position = default and UDim2.new(1, -10, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
     toggleCircle.AnchorPoint = Vector2.new(default and 1 or 0, 0.5)
     toggleCircle.ZIndex = toggle.ZIndex + 1
     toggleCircle.Parent = toggle
     
-    createRoundedCorners(toggleCircle, 10)
+    createRoundedCorners(toggleCircle, 8)
     
     local label = Instance.new("TextLabel")
     label.Name = "Label"
@@ -444,7 +576,7 @@ function LiquidGlass:CreateToggle(text, default, options)
     label.TextSize = 14
     label.TextColor3 = TH.Txt
     label.BackgroundTransparency = 1
-    label.Size = UDim2.new(1, -70, 1, 0)
+    label.Size = UDim2.new(1, -68, 1, 0)
     label.Position = UDim2.new(0, 0, 0, 0)
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.ZIndex = toggleFrame.ZIndex + 1
@@ -460,7 +592,7 @@ function LiquidGlass:CreateToggle(text, default, options)
         }):Play()
         
         TweenService:Create(toggleCircle, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Position = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10),
+            Position = state and UDim2.new(1, -10, 0.5, -8) or UDim2.new(0, 2, 0.5, -8),
             AnchorPoint = state and Vector2.new(1, 0.5) or Vector2.new(0, 0.5)
         }):Play()
         
@@ -468,6 +600,8 @@ function LiquidGlass:CreateToggle(text, default, options)
             options.Callback(state)
         end
     end
+    
+    addHoverEffect(toggle, toggle.BackgroundColor3, state and TH.Ok0 or TH.Btn1)
     
     toggle.MouseButton1Click:Connect(toggleState)
     label.MouseButton1Click:Connect(toggleState)
@@ -480,6 +614,342 @@ function LiquidGlass:CreateToggle(text, default, options)
             if state ~= newState then
                 toggleState()
             end
+        end
+    }
+end
+
+function LiquidGlass:CreateSlider(text, min, max, default, options)
+    options = options or {}
+    
+    local sliderFrame = Instance.new("Frame")
+    sliderFrame.Name = "SliderContainer"
+    sliderFrame.BackgroundTransparency = 1
+    sliderFrame.Size = UDim2.new(1, 0, 0, 60)
+    sliderFrame.LayoutOrder = options.LayoutOrder or 1
+    sliderFrame.ZIndex = self.Content.ZIndex + 1
+    sliderFrame.Parent = self.Content
+    
+    local label = Instance.new("TextLabel")
+    label.Name = "Label"
+    label.Text = text or "Slider"
+    label.Font = Enum.Font.Gotham
+    label.TextSize = 14
+    label.TextColor3 = TH.Txt
+    label.BackgroundTransparency = 1
+    label.Size = UDim2.new(1, -60, 0, 20)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.ZIndex = sliderFrame.ZIndex + 1
+    label.Parent = sliderFrame
+    
+    local valueLabel = Instance.new("TextLabel")
+    valueLabel.Name = "Value"
+    valueLabel.Text = tostring(default or min)
+    valueLabel.Font = Enum.Font.GothamSemibold
+    valueLabel.TextSize = 14
+    valueLabel.TextColor3 = TH.Accent
+    valueLabel.BackgroundTransparency = 1
+    valueLabel.Size = UDim2.new(0, 50, 0, 20)
+    valueLabel.Position = UDim2.new(1, -50, 0, 0)
+    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
+    valueLabel.ZIndex = sliderFrame.ZIndex + 1
+    valueLabel.Parent = sliderFrame
+    
+    local track = Instance.new("Frame")
+    track.Name = "Track"
+    track.BackgroundColor3 = TH.Btn0
+    track.BackgroundTransparency = 0.08
+    track.Size = UDim2.new(1, 0, 0, 6)
+    track.Position = UDim2.new(0, 0, 0, 30)
+    track.ZIndex = sliderFrame.ZIndex + 1
+    track.Parent = sliderFrame
+    
+    createRoundedCorners(track, 3)
+    
+    local trackStroke = Instance.new("UIStroke")
+    trackStroke.Color = TH.St0
+    trackStroke.Transparency = 0.78
+    trackStroke.Thickness = 1
+    trackStroke.Parent = track
+    
+    local fill = Instance.new("Frame")
+    fill.Name = "Fill"
+    fill.BackgroundColor3 = TH.Accent
+    fill.BackgroundTransparency = 0.12
+    fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
+    fill.ZIndex = track.ZIndex + 1
+    fill.Parent = track
+    
+    createRoundedCorners(fill, 3)
+    
+    local fillStroke = Instance.new("UIStroke")
+    fillStroke.Color = TH.Accent
+    fillStroke.Transparency = 0.5
+    fillStroke.Thickness = 1
+    fillStroke.Parent = fill
+    
+    local thumb = Instance.new("Frame")
+    thumb.Name = "Thumb"
+    thumb.BackgroundColor3 = TH.Txt
+    thumb.Size = UDim2.new(0, 20, 0, 20)
+    thumb.Position = UDim2.new(fill.Size.X.Scale, -10, 0.5, -10)
+    thumb.AnchorPoint = Vector2.new(0.5, 0.5)
+    thumb.ZIndex = fill.ZIndex + 2
+    thumb.Parent = track
+    
+    createRoundedCorners(thumb, 10)
+    
+    local thumbStroke = Instance.new("UIStroke")
+    thumbStroke.Color = TH.St0
+    thumbStroke.Thickness = 1.5
+    thumbStroke.Transparency = 0.3
+    thumbStroke.Parent = thumb
+    
+    local value = default or min
+    local dragging = false
+    
+    local function setValue(newValue)
+        value = math.clamp(newValue, min, max)
+        local percent = (value - min) / (max - min)
+        
+        fill.Size = UDim2.new(percent, 0, 1, 0)
+        thumb.Position = UDim2.new(percent, -10, 0.5, -10)
+        valueLabel.Text = options.Precise and string.format("%.1f", value) or tostring(math.floor(value))
+        
+        if options.Callback then
+            options.Callback(value)
+        end
+    end
+    
+    track.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            
+            local relativeX = input.Position.X - track.AbsolutePosition.X
+            local percent = math.clamp(relativeX / track.AbsoluteSize.X, 0, 1)
+            local newValue = min + percent * (max - min)
+            
+            setValue(newValue)
+        end
+    end)
+    
+    track.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+    
+    track.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local relativeX = input.Position.X - track.AbsolutePosition.X
+            local percent = math.clamp(relativeX / track.AbsoluteSize.X, 0, 1)
+            local newValue = min + percent * (max - min)
+            
+            setValue(newValue)
+        end
+    end)
+    
+    thumb.MouseEnter:Connect(function()
+        TweenService:Create(thumb, TweenInfo.new(0.12), {
+            Size = UDim2.new(0, 24, 0, 24)
+        }):Play()
+    end)
+    
+    thumb.MouseLeave:Connect(function()
+        TweenService:Create(thumb, TweenInfo.new(0.12), {
+            Size = UDim2.new(0, 20, 0, 20)
+        }):Play()
+    end)
+    
+    setValue(default or min)
+    
+    return {
+        Track = track,
+        Thumb = thumb,
+        GetValue = function() return value end,
+        SetValue = setValue
+    }
+end
+
+function LiquidGlass:CreateDropdown(text, optionsList, default, options)
+    options = options or {}
+    
+    local dropdownFrame = Instance.new("Frame")
+    dropdownFrame.Name = "DropdownContainer"
+    dropdownFrame.BackgroundTransparency = 1
+    dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+    dropdownFrame.LayoutOrder = options.LayoutOrder or 1
+    dropdownFrame.ZIndex = self.Content.ZIndex + 1
+    dropdownFrame.Parent = self.Content
+    
+    local label = Instance.new("TextLabel")
+    label.Name = "Label"
+    label.Text = text or "Dropdown"
+    label.Font = Enum.Font.Gotham
+    label.TextSize = 14
+    label.TextColor3 = TH.Txt
+    label.BackgroundTransparency = 1
+    label.Size = UDim2.new(1, 0, 0, 20)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.ZIndex = dropdownFrame.ZIndex + 1
+    label.Parent = dropdownFrame
+    
+    local dropdown = Instance.new("TextButton")
+    dropdown.Name = "Dropdown"
+    dropdown.Text = default or "Select..."
+    dropdown.Font = Enum.Font.Gotham
+    dropdown.TextSize = 14
+    dropdown.TextColor3 = TH.Mut
+    dropdown.BackgroundColor3 = TH.Btn0
+    dropdown.BackgroundTransparency = 0.06
+    dropdown.Size = UDim2.new(1, 0, 0, 40)
+    dropdown.Position = UDim2.new(0, 0, 0, 20)
+    dropdown.AutoButtonColor = false
+    dropdown.TextXAlignment = Enum.TextXAlignment.Left
+    dropdown.ZIndex = dropdownFrame.ZIndex + 1
+    dropdown.Parent = dropdownFrame
+    
+    createRoundedCorners(dropdown, 14)
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = TH.St0
+    stroke.Transparency = 0.78
+    stroke.Thickness = 1
+    stroke.Parent = dropdown
+    
+    local arrow = Instance.new("ImageLabel")
+    arrow.Name = "Arrow"
+    arrow.Image = "rbxassetid://6031091004"
+    arrow.Size = UDim2.new(0, 20, 0, 20)
+    arrow.Position = UDim2.new(1, -30, 0.5, -10)
+    arrow.AnchorPoint = Vector2.new(1, 0.5)
+    arrow.BackgroundTransparency = 1
+    arrow.ImageColor3 = TH.Mut
+    arrow.ZIndex = dropdown.ZIndex + 1
+    arrow.Parent = dropdown
+    
+    local padding = Instance.new("UIPadding")
+    padding.PaddingLeft = UDim.new(0, 14)
+    padding.PaddingRight = UDim.new(0, 40)
+    padding.Parent = dropdown
+    
+    local dropdownOpen = false
+    local dropdownMenu = nil
+    
+    local function toggleDropdown()
+        dropdownOpen = not dropdownOpen
+        
+        if dropdownOpen then
+            dropdownMenu = Instance.new("Frame")
+            dropdownMenu.Name = "DropdownMenu"
+            dropdownMenu.BackgroundColor3 = TH.Bg1
+            dropdownMenu.BackgroundTransparency = 0.06
+            dropdownMenu.Size = UDim2.new(1, 0, 0, 0)
+            dropdownMenu.AutomaticSize = Enum.AutomaticSize.Y
+            dropdownMenu.Position = UDim2.new(0, 0, 1, 4)
+            dropdownMenu.ZIndex = dropdown.ZIndex + 10
+            dropdownMenu.ClipsDescendants = true
+            dropdownMenu.Parent = dropdownFrame
+            
+            createRoundedCorners(dropdownMenu, 14)
+            
+            local menuStroke = Instance.new("UIStroke")
+            menuStroke.Color = TH.St0
+            menuStroke.Transparency = 0.7
+            menuStroke.Thickness = 1
+            menuStroke.Parent = dropdownMenu
+            
+            local menuLayout = Instance.new("UIListLayout")
+            menuLayout.Padding = UDim.new(0, 2)
+            menuLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            menuLayout.Parent = dropdownMenu
+            
+            local menuPadding = Instance.new("UIPadding")
+            menuPadding.PaddingTop = UDim.new(0, 8)
+            menuPadding.PaddingBottom = UDim.new(0, 8)
+            menuPadding.PaddingLeft = UDim.new(0, 8)
+            menuPadding.PaddingRight = UDim.new(0, 8)
+            menuPadding.Parent = dropdownMenu
+            
+            for i, option in ipairs(optionsList) do
+                local optionButton = Instance.new("TextButton")
+                optionButton.Name = "Option_" .. i
+                optionButton.Text = option
+                optionButton.Font = Enum.Font.Gotham
+                optionButton.TextSize = 14
+                optionButton.TextColor3 = TH.Txt
+                optionButton.BackgroundColor3 = TH.Btn0
+                optionButton.BackgroundTransparency = 0.08
+                optionButton.Size = UDim2.new(1, 0, 0, 34)
+                optionButton.AutoButtonColor = false
+                optionButton.ZIndex = dropdownMenu.ZIndex + 1
+                optionButton.Parent = dropdownMenu
+                
+                createRoundedCorners(optionButton, 10)
+                
+                local optionStroke = Instance.new("UIStroke")
+                optionStroke.Color = TH.St0
+                optionStroke.Transparency = 0.82
+                optionStroke.Thickness = 1
+                optionStroke.Parent = optionButton
+                
+                addHoverEffect(optionButton, TH.Btn0, TH.Btn1)
+                
+                optionButton.MouseButton1Click:Connect(function()
+                    dropdown.Text = option
+                    dropdown.TextColor3 = TH.Txt
+                    dropdownOpen = false
+                    
+                    TweenService:Create(dropdownMenu, TweenInfo.new(0.16), {
+                        Size = UDim2.new(1, 0, 0, 0)
+                    }):Play()
+                    
+                    task.delay(0.16, function()
+                        if dropdownMenu then
+                            dropdownMenu:Destroy()
+                        end
+                    end)
+                    
+                    if options.Callback then
+                        options.Callback(option)
+                    end
+                end)
+            end
+            
+            dropdownMenu.Size = UDim2.new(1, 0, 0, 0)
+            TweenService:Create(dropdownMenu, TweenInfo.new(0.16), {
+                Size = UDim2.new(1, 0, 0, math.min(#optionsList * 38, 200))
+            }):Play()
+        else
+            if dropdownMenu then
+                TweenService:Create(dropdownMenu, TweenInfo.new(0.16), {
+                    Size = UDim2.new(1, 0, 0, 0)
+                }):Play()
+                
+                task.delay(0.16, function()
+                    if dropdownMenu then
+                        dropdownMenu:Destroy()
+                    end
+                end)
+            end
+        end
+    end
+    
+    addHoverEffect(dropdown, TH.Btn0, TH.Btn1)
+    
+    dropdown.MouseButton1Click:Connect(function()
+        toggleDropdown()
+    end)
+    
+    return {
+        Dropdown = dropdown,
+        SetOptions = function(newOptions)
+            optionsList = newOptions
+        end,
+        SetSelected = function(text)
+            dropdown.Text = text
+            dropdown.TextColor3 = TH.Txt
         end
     }
 end
@@ -566,72 +1036,6 @@ function LiquidGlass.Notify(options)
         
         task.wait(0.05)
         contentHeight = contentHeight + desc.AbsoluteSize.Y
-    end
-    
-    if options.Buttons then
-        local buttonFrame = Instance.new("Frame")
-        buttonFrame.Name = "Buttons"
-        buttonFrame.BackgroundTransparency = 1
-        buttonFrame.Size = UDim2.new(1, 0, 0, 38)
-        buttonFrame.LayoutOrder = 10
-        buttonFrame.ZIndex = content.ZIndex + 1
-        buttonFrame.Parent = content
-        contentHeight = contentHeight + 38
-        
-        local buttonLayout = Instance.new("UIListLayout")
-        buttonLayout.FillDirection = Enum.FillDirection.Horizontal
-        buttonLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-        buttonLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-        buttonLayout.Padding = UDim.new(0, 8)
-        buttonLayout.Parent = buttonFrame
-        
-        for i, btnInfo in ipairs(options.Buttons) do
-            local btnFrame = Instance.new("Frame")
-            btnFrame.Name = "BtnContainer"
-            btnFrame.BackgroundTransparency = 1
-            btnFrame.Size = UDim2.new(0, 80, 0, 30)
-            btnFrame.ZIndex = buttonFrame.ZIndex + 1
-            btnFrame.Parent = buttonFrame
-            
-            local btn = Instance.new("TextButton")
-            btn.Name = "Button"
-            btn.Text = btnInfo.Text or "Button"
-            btn.Font = Enum.Font.Gotham
-            btn.TextSize = 13
-            btn.TextColor3 = TH.Txt
-            btn.BackgroundColor3 = btnInfo.Color or TH.Btn0
-            btn.BackgroundTransparency = 0.08
-            btn.Size = UDim2.new(1, 0, 1, 0)
-            btn.AutoButtonColor = false
-            btn.ZIndex = btnFrame.ZIndex + 1
-            btn.Parent = btnFrame
-            
-            createRoundedCorners(btn, 12)
-            
-            local btnStroke = Instance.new("UIStroke")
-            btnStroke.Color = TH.St0
-            btnStroke.Transparency = 0.78
-            btnStroke.Thickness = 1
-            btnStroke.Parent = btn
-            
-            btn.MouseEnter:Connect(function()
-                TweenService:Create(btn, TweenInfo.new(0.12), {
-                    BackgroundColor3 = btnInfo.HoverColor or TH.Btn1
-                }):Play()
-            end)
-            
-            btn.MouseLeave:Connect(function()
-                TweenService:Create(btn, TweenInfo.new(0.12), {
-                    BackgroundColor3 = btnInfo.Color or TH.Btn0
-                }):Play()
-            end)
-            
-            btn.MouseButton1Click:Connect(function()
-                if btnInfo.Callback then
-                    btnInfo.Callback()
-                end
-            end)
-        end
     end
     
     contentHeight = contentHeight + 48
