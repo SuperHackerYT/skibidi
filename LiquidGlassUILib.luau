@@ -1,40 +1,24 @@
--- LiquidGlass UI Library - Fixed Version
--- Made for Roblox Executors
-
 local LiquidGlass = {}
 LiquidGlass.__index = LiquidGlass
 
--- Services
 local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local TextService = game:GetService("TextService")
 
--- Theme Colors
 local TH = {
     Txt = Color3.fromRGB(235, 235, 235),
     Ttl = Color3.fromRGB(255, 255, 255),
-    Mut = Color3.fromRGB(170, 170, 170),
-    Bg0 = Color3.fromRGB(10, 10, 10),
     Bg1 = Color3.fromRGB(18, 18, 18),
     Bg2 = Color3.fromRGB(26, 26, 26),
     St0 = Color3.fromRGB(255, 255, 255),
-    St1 = Color3.fromRGB(85, 85, 85),
     Btn0 = Color3.fromRGB(22, 22, 22),
     Btn1 = Color3.fromRGB(32, 32, 32),
     Btn2 = Color3.fromRGB(16, 16, 16),
     Bad0 = Color3.fromRGB(235, 70, 70),
-    Bad1 = Color3.fromRGB(255, 95, 95),
     Ok0 = Color3.fromRGB(0, 180, 110),
-    Ok1 = Color3.fromRGB(0, 210, 130),
-    Line = Color3.fromRGB(70, 70, 70),
-    Prog = Color3.fromRGB(255, 255, 255),
     Ph = Color3.fromRGB(160, 160, 160),
-    Accent = Color3.fromRGB(0, 150, 255),
-    Glass = Color3.fromRGB(255, 255, 255)
+    Accent = Color3.fromRGB(0, 150, 255)
 }
 
--- Helper Functions
 local function createRoundedCorners(frame, radius)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, radius or 22)
@@ -48,7 +32,7 @@ local function addGlassEffect(frame)
     gradient.Color = ColorSequence.new({
         ColorSequenceKeypoint.new(0, TH.Bg1),
         ColorSequenceKeypoint.new(0.5, TH.Bg2),
-        ColorSequenceKeypoint.new(1, TH.Bg0)
+        ColorSequenceKeypoint.new(1, TH.Bg1)
     })
     gradient.Parent = frame
     
@@ -87,7 +71,6 @@ local function addHoverEffect(button, normalColor, hoverColor)
     end)
 end
 
--- Main Window
 function LiquidGlass:CreateWindow(title, options)
     options = options or {}
     
@@ -110,7 +93,6 @@ function LiquidGlass:CreateWindow(title, options)
     createRoundedCorners(mainFrame, 24)
     local glassEffects = addGlassEffect(mainFrame)
     
-    -- Header
     local header = Instance.new("Frame")
     header.Name = "Header"
     header.Size = UDim2.new(1, 0, 0, 50)
@@ -152,7 +134,6 @@ function LiquidGlass:CreateWindow(title, options)
     closeStroke.Thickness = 1
     closeStroke.Parent = closeButton
     
-    -- Close button hover
     closeButton.MouseEnter:Connect(function()
         TweenService:Create(closeButton, TweenInfo.new(0.12), {
             BackgroundColor3 = TH.Bad0
@@ -165,7 +146,6 @@ function LiquidGlass:CreateWindow(title, options)
         }):Play()
     end)
     
-    -- Content area
     local content = Instance.new("ScrollingFrame")
     content.Name = "Content"
     content.Size = UDim2.new(1, -40, 1, -90)
@@ -184,14 +164,11 @@ function LiquidGlass:CreateWindow(title, options)
     local contentPadding = Instance.new("UIPadding")
     contentPadding.PaddingTop = UDim.new(0, 10)
     contentPadding.PaddingBottom = UDim.new(0, 20)
-    contentPadding.PaddingLeft = UDim.new(0, 0)
-    contentPadding.PaddingRight = UDim.new(0, 0)
     contentPadding.Parent = content
     
     content.AutomaticCanvasSize = Enum.AutomaticSize.Y
     content.CanvasSize = UDim2.new()
     
-    -- Window object
     local window = {
         ScreenGui = screenGui,
         MainFrame = mainFrame,
@@ -201,13 +178,11 @@ function LiquidGlass:CreateWindow(title, options)
     
     setmetatable(window, LiquidGlass)
     
-    -- Open animation
     mainFrame.Size = UDim2.new(0, 0, 0, 0)
     TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
         Size = UDim2.new(0, options.Width or 500, 0, options.Height or 550)
     }):Play()
     
-    -- Close functionality
     closeButton.MouseButton1Click:Connect(function()
         TweenService:Create(mainFrame, TweenInfo.new(0.2), {
             Size = UDim2.new(0, 0, 0, 0),
@@ -223,7 +198,6 @@ function LiquidGlass:CreateWindow(title, options)
         end)
     end)
     
-    -- Draggable window
     local dragging = false
     local dragInput, dragStart, startPos
     
@@ -261,7 +235,6 @@ function LiquidGlass:CreateWindow(title, options)
     return window
 end
 
--- Button Element (Fixed)
 function LiquidGlass:CreateButton(text, options)
     options = options or {}
     
@@ -275,10 +248,7 @@ function LiquidGlass:CreateButton(text, options)
     
     local button = Instance.new("TextButton")
     button.Name = "Button"
-    button.Text = text or "Button"
-    button.Font = Enum.Font.Gotham
-    button.TextSize = 14
-    button.TextColor3 = TH.Txt
+    button.Text = ""
     button.BackgroundColor3 = options.Color or TH.Btn0
     button.BackgroundTransparency = 0.06
     button.Size = UDim2.new(1, 0, 1, 0)
@@ -294,15 +264,6 @@ function LiquidGlass:CreateButton(text, options)
     stroke.Thickness = 1
     stroke.Parent = button
     
-    -- Text padding using Frame wrapper instead of UIPadding on TextButton
-    local textPadding = Instance.new("Frame")
-    textPadding.Name = "TextPadding"
-    textPadding.BackgroundTransparency = 1
-    textPadding.Size = UDim2.new(1, -24, 1, 0)
-    textPadding.Position = UDim2.new(0, 12, 0, 0)
-    textPadding.ZIndex = button.ZIndex + 1
-    textPadding.Parent = button
-    
     local textLabel = Instance.new("TextLabel")
     textLabel.Name = "ButtonText"
     textLabel.Text = text or "Button"
@@ -310,12 +271,12 @@ function LiquidGlass:CreateButton(text, options)
     textLabel.TextSize = 14
     textLabel.TextColor3 = TH.Txt
     textLabel.BackgroundTransparency = 1
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.Size = UDim2.new(1, -24, 1, 0)
+    textLabel.Position = UDim2.new(0, 12, 0, 0)
     textLabel.TextXAlignment = Enum.TextXAlignment.Left
-    textLabel.ZIndex = textPadding.ZIndex + 1
-    textLabel.Parent = textPadding
+    textLabel.ZIndex = button.ZIndex + 1
+    textLabel.Parent = button
     
-    -- Icon support
     if options.Icon then
         local icon = Instance.new("ImageLabel")
         icon.Name = "Icon"
@@ -326,16 +287,13 @@ function LiquidGlass:CreateButton(text, options)
         icon.BackgroundTransparency = 1
         icon.ZIndex = button.ZIndex + 1
         icon.Parent = button
-        
-        -- Adjust text position
-        textPadding.Position = UDim2.new(0, 38, 0, 0)
-        textPadding.Size = UDim2.new(1, -46, 1, 0)
+        textLabel.Position = UDim2.new(0, 38, 0, 0)
+        textLabel.Size = UDim2.new(1, -46, 1, 0)
     end
     
     addHoverEffect(button, button.BackgroundColor3, options.HoverColor or TH.Btn1)
     
     button.MouseButton1Click:Connect(function()
-        -- Press animation
         TweenService:Create(button, TweenInfo.new(0.1), {
             Size = UDim2.new(1, -4, 1, -4)
         }):Play()
@@ -354,7 +312,6 @@ function LiquidGlass:CreateButton(text, options)
     return button
 end
 
--- Label Element
 function LiquidGlass:CreateLabel(text, options)
     options = options or {}
     
@@ -375,7 +332,6 @@ function LiquidGlass:CreateLabel(text, options)
     return label
 end
 
--- TextBox Element (Fixed)
 function LiquidGlass:CreateTextBox(placeholder, options)
     options = options or {}
     
@@ -410,33 +366,6 @@ function LiquidGlass:CreateTextBox(placeholder, options)
     stroke.Thickness = 1
     stroke.Parent = textBox
     
-    -- Text padding using wrapper frame
-    local paddingFrame = Instance.new("Frame")
-    paddingFrame.Name = "Padding"
-    paddingFrame.BackgroundTransparency = 1
-    paddingFrame.Size = UDim2.new(1, -24, 1, 0)
-    paddingFrame.Position = UDim2.new(0, 12, 0, 0)
-    paddingFrame.ZIndex = textBox.ZIndex + 1
-    paddingFrame.Parent = textBox
-    
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Name = "TextDisplay"
-    textLabel.Text = ""
-    textLabel.Font = Enum.Font.Gotham
-    textLabel.TextSize = 14
-    textLabel.TextColor3 = TH.Txt
-    textLabel.BackgroundTransparency = 1
-    textLabel.Size = UDim2.new(1, 0, 1, 0)
-    textLabel.TextXAlignment = Enum.TextXAlignment.Left
-    textLabel.ZIndex = paddingFrame.ZIndex + 1
-    textLabel.Parent = paddingFrame
-    
-    -- Update text display
-    textBox:GetPropertyChangedSignal("Text"):Connect(function()
-        textLabel.Text = textBox.Text
-    end)
-    
-    -- Focus effects
     textBox.Focused:Connect(function()
         TweenService:Create(textBox, TweenInfo.new(0.12), {
             BackgroundColor3 = TH.Btn1
@@ -464,7 +393,6 @@ function LiquidGlass:CreateTextBox(placeholder, options)
     return textBox
 end
 
--- Toggle Element (Simplified)
 function LiquidGlass:CreateToggle(text, default, options)
     options = options or {}
     
@@ -554,7 +482,6 @@ function LiquidGlass:CreateToggle(text, default, options)
     }
 end
 
--- Notification Function (Standalone)
 function LiquidGlass.Notify(options)
     options = options or {}
     
@@ -685,7 +612,17 @@ function LiquidGlass.Notify(options)
             btnStroke.Thickness = 1
             btnStroke.Parent = btn
             
-            addHoverEffect(btn, btn.BackgroundColor3, btnInfo.HoverColor or TH.Btn1)
+            btn.MouseEnter:Connect(function()
+                TweenService:Create(btn, TweenInfo.new(0.12), {
+                    BackgroundColor3 = btnInfo.HoverColor or TH.Btn1
+                }):Play()
+            end)
+            
+            btn.MouseLeave:Connect(function()
+                TweenService:Create(btn, TweenInfo.new(0.12), {
+                    BackgroundColor3 = btnInfo.Color or TH.Btn0
+                }):Play()
+            end)
             
             btn.MouseButton1Click:Connect(function()
                 if btnInfo.Callback then
@@ -697,7 +634,6 @@ function LiquidGlass.Notify(options)
     
     contentHeight = contentHeight + 48
     
-    -- Animate in
     TweenService:Create(notification, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
         Size = UDim2.new(0, 320, 0, contentHeight)
     }):Play()
@@ -731,7 +667,6 @@ function LiquidGlass.Notify(options)
     }
 end
 
--- Quick notification
 function LiquidGlass.QuickNotify(title, desc, duration)
     return LiquidGlass.Notify({
         Title = title,
@@ -740,8 +675,5 @@ function LiquidGlass.QuickNotify(title, desc, duration)
     })
 end
 
--- Make it global
 getgenv().LiquidGlass = LiquidGlass
-
--- Return the library
 return LiquidGlass
