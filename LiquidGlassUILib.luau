@@ -1,9 +1,10 @@
+-- LiquidGlass UI Library - Perfect Version
 local LiquidGlass = {}
 LiquidGlass.__index = LiquidGlass
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+local TextService = game:GetService("TextService")
 
 local TH = {
     Txt = Color3.fromRGB(235, 235, 235),
@@ -16,8 +17,11 @@ local TH = {
     Btn2 = Color3.fromRGB(16, 16, 16),
     Bad0 = Color3.fromRGB(235, 70, 70),
     Ok0 = Color3.fromRGB(0, 180, 110),
+    Ok1 = Color3.fromRGB(0, 210, 130),
     Ph = Color3.fromRGB(160, 160, 160),
-    Accent = Color3.fromRGB(0, 150, 255)
+    Accent = Color3.fromRGB(0, 150, 255),
+    Line = Color3.fromRGB(70, 70, 70),
+    Prog = Color3.fromRGB(255, 255, 255)
 }
 
 local function createRoundedCorners(frame, radius)
@@ -72,6 +76,47 @@ local function addHoverEffect(button, normalColor, hoverColor)
     end)
 end
 
+local function createGlassButton(parent, text, size, pos, callback)
+    local button = Instance.new("TextButton")
+    button.Name = "GlassButton"
+    button.Text = text
+    button.Font = Enum.Font.Gotham
+    button.TextSize = 14
+    button.TextColor3 = TH.Txt
+    button.BackgroundColor3 = TH.Btn0
+    button.BackgroundTransparency = 0.08
+    button.Size = size
+    button.Position = pos
+    button.AutoButtonColor = false
+    button.Parent = parent
+    
+    createRoundedCorners(button, 12)
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = TH.St0
+    stroke.Transparency = 0.78
+    stroke.Thickness = 1
+    stroke.Parent = button
+    
+    addHoverEffect(button, TH.Btn0, TH.Btn1)
+    
+    button.MouseButton1Click:Connect(callback)
+    
+    return button
+end
+
+local function loadNotifications()
+    local success, notifLib = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/ltseverydayyou/Nameless-Admin/main/NamelessAdminNotifications.lua"))()
+    end)
+    if success then
+        return notifLib
+    end
+    return nil
+end
+
+local EnhancedNotifs = loadNotifications()
+
 function LiquidGlass:CreateWindow(title, options)
     options = options or {}
     
@@ -84,15 +129,26 @@ function LiquidGlass:CreateWindow(title, options)
     
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "MainWindow"
-    mainFrame.Size = UDim2.new(0, options.Width or 450, 0, options.Height or 500)
-    mainFrame.Position = UDim2.new(0.5, -(options.Width or 450)/2, 0.5, -(options.Height or 500)/2)
+    mainFrame.Size = UDim2.new(0, options.Width or 420, 0, options.Height or 500)
+    mainFrame.Position = UDim2.new(0.5, -(options.Width or 420)/2, 0.5, -(options.Height or 500)/2)
     mainFrame.BackgroundColor3 = TH.Bg1
     mainFrame.BackgroundTransparency = 0.65
     mainFrame.ZIndex = 10
+    mainFrame.ClipsDescendants = true
     mainFrame.Parent = screenGui
     
     createRoundedCorners(mainFrame, 20)
     local glassEffects = addGlassEffect(mainFrame)
+    
+    local topLine = Instance.new("Frame")
+    topLine.Name = "TopLine"
+    topLine.BorderSizePixel = 0
+    topLine.BackgroundColor3 = TH.Line
+    topLine.BackgroundTransparency = 0.7
+    topLine.Position = UDim2.new(0, 15, 0, 40)
+    topLine.Size = UDim2.new(1, -30, 0, 1)
+    topLine.ZIndex = 11
+    topLine.Parent = mainFrame
     
     local header = Instance.new("Frame")
     header.Name = "Header"
@@ -131,13 +187,13 @@ function LiquidGlass:CreateWindow(title, options)
     
     local minimizeButton = Instance.new("TextButton")
     minimizeButton.Name = "Minimize"
-    minimizeButton.Text = "─"
-    minimizeButton.Font = Enum.Font.GothamBold
-    minimizeButton.TextSize = 20
+    minimizeButton.Text = "🗕"
+    minimizeButton.Font = Enum.Font.Gotham
+    minimizeButton.TextSize = 16
     minimizeButton.TextColor3 = TH.Txt
-    minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    minimizeButton.Size = UDim2.new(0, 32, 0, 32)
     minimizeButton.BackgroundColor3 = TH.Btn0
-    minimizeButton.BackgroundTransparency = 0.06
+    minimizeButton.BackgroundTransparency = 0.08
     minimizeButton.ZIndex = 13
     minimizeButton.Parent = buttonContainer
     
@@ -152,11 +208,11 @@ function LiquidGlass:CreateWindow(title, options)
     closeButton.Name = "Close"
     closeButton.Text = "×"
     closeButton.Font = Enum.Font.GothamBold
-    closeButton.TextSize = 22
+    closeButton.TextSize = 20
     closeButton.TextColor3 = TH.Txt
-    closeButton.Size = UDim2.new(0, 30, 0, 30)
+    closeButton.Size = UDim2.new(0, 32, 0, 32)
     closeButton.BackgroundColor3 = TH.Btn0
-    closeButton.BackgroundTransparency = 0.06
+    closeButton.BackgroundTransparency = 0.08
     closeButton.ZIndex = 13
     closeButton.Parent = buttonContainer
     
@@ -193,11 +249,13 @@ function LiquidGlass:CreateWindow(title, options)
     
     local content = Instance.new("ScrollingFrame")
     content.Name = "Content"
-    content.Size = UDim2.new(1, -30, 1, -80)
-    content.Position = UDim2.new(0, 15, 0, 55)
+    content.Size = UDim2.new(1, -30, 1, -85)
+    content.Position = UDim2.new(0, 15, 0, 50)
     content.BackgroundTransparency = 1
     content.BorderSizePixel = 0
     content.ScrollBarThickness = 6
+    content.ScrollBarImageColor3 = TH.Accent
+    content.ScrollBarImageTransparency = 0.7
     content.ZIndex = 11
     content.Parent = mainFrame
     
@@ -209,6 +267,8 @@ function LiquidGlass:CreateWindow(title, options)
     local contentPadding = Instance.new("UIPadding")
     contentPadding.PaddingTop = UDim.new(0, 10)
     contentPadding.PaddingBottom = UDim.new(0, 20)
+    contentPadding.PaddingLeft = UDim.new(0, 5)
+    contentPadding.PaddingRight = UDim.new(0, 5)
     contentPadding.Parent = content
     
     content.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -216,7 +276,7 @@ function LiquidGlass:CreateWindow(title, options)
     
     local minimizedBall = Instance.new("Frame")
     minimizedBall.Name = "MinimizedBall"
-    minimizedBall.Size = UDim2.new(0, 60, 0, 60)
+    minimizedBall.Size = UDim2.new(0, 0, 0, 0)
     minimizedBall.Position = mainFrame.Position
     minimizedBall.BackgroundColor3 = TH.Bg1
     minimizedBall.BackgroundTransparency = 0.65
@@ -229,9 +289,9 @@ function LiquidGlass:CreateWindow(title, options)
     
     local ballIcon = Instance.new("TextLabel")
     ballIcon.Name = "Icon"
-    ballIcon.Text = "◎"
+    ballIcon.Text = "●"
     ballIcon.Font = Enum.Font.GothamSemibold
-    ballIcon.TextSize = 24
+    ballIcon.TextSize = 20
     ballIcon.TextColor3 = TH.Ttl
     ballIcon.BackgroundTransparency = 1
     ballIcon.Size = UDim2.new(1, 0, 1, 0)
@@ -244,17 +304,13 @@ function LiquidGlass:CreateWindow(title, options)
         minimized = not minimized
         
         if minimized then
-            TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-                Size = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1
-            }):Play()
-            
+            mainFrame.Visible = false
             minimizedBall.Position = mainFrame.Position
             minimizedBall.Visible = true
             minimizedBall.Size = UDim2.new(0, 0, 0, 0)
             
             TweenService:Create(minimizedBall, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                Size = UDim2.new(0, 60, 0, 60)
+                Size = UDim2.new(0, 50, 0, 50)
             }):Play()
         else
             TweenService:Create(minimizedBall, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
@@ -263,10 +319,7 @@ function LiquidGlass:CreateWindow(title, options)
             
             task.delay(0.15, function()
                 minimizedBall.Visible = false
-                TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                    Size = UDim2.new(0, options.Width or 450, 0, options.Height or 500),
-                    BackgroundTransparency = 0.65
-                }):Play()
+                mainFrame.Visible = true
             end)
         end
     end
@@ -291,7 +344,7 @@ function LiquidGlass:CreateWindow(title, options)
     
     mainFrame.Size = UDim2.new(0, 0, 0, 0)
     TweenService:Create(mainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, options.Width or 450, 0, options.Height or 500)
+        Size = UDim2.new(0, options.Width or 420, 0, options.Height or 500)
     }):Play()
     
     closeButton.MouseButton1Click:Connect(function()
@@ -366,6 +419,13 @@ function LiquidGlass:CreateWindow(title, options)
         end
     end)
     
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            minimizedBall.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    
     return window
 end
 
@@ -384,7 +444,7 @@ function LiquidGlass:CreateButton(text, options)
     button.Name = "Button"
     button.Text = ""
     button.BackgroundColor3 = options.Color or TH.Btn0
-    button.BackgroundTransparency = 0.06
+    button.BackgroundTransparency = 0.08
     button.Size = UDim2.new(1, 0, 1, 0)
     button.AutoButtonColor = false
     button.ZIndex = buttonFrame.ZIndex + 1
@@ -486,7 +546,7 @@ function LiquidGlass:CreateTextBox(placeholder, options)
     textBox.TextSize = 14
     textBox.TextColor3 = TH.Txt
     textBox.BackgroundColor3 = TH.Btn0
-    textBox.BackgroundTransparency = 0.06
+    textBox.BackgroundTransparency = 0.08
     textBox.Size = UDim2.new(1, 0, 1, 0)
     textBox.ClearTextOnFocus = false
     textBox.ZIndex = textBoxFrame.ZIndex + 1
@@ -533,41 +593,10 @@ function LiquidGlass:CreateToggle(text, default, options)
     local toggleFrame = Instance.new("Frame")
     toggleFrame.Name = "ToggleContainer"
     toggleFrame.BackgroundTransparency = 1
-    toggleFrame.Size = UDim2.new(1, 0, 0, 34)
+    toggleFrame.Size = UDim2.new(1, 0, 0, 36)
     toggleFrame.LayoutOrder = options.LayoutOrder or 1
     toggleFrame.ZIndex = self.Content.ZIndex + 1
     toggleFrame.Parent = self.Content
-    
-    local toggle = Instance.new("TextButton")
-    toggle.Name = "Toggle"
-    toggle.Text = ""
-    toggle.BackgroundColor3 = default and TH.Ok0 or TH.Btn0
-    toggle.BackgroundTransparency = 0.08
-    toggle.Size = UDim2.new(0, 48, 0, 24)
-    toggle.Position = UDim2.new(1, -10, 0.5, -12)
-    toggle.AnchorPoint = Vector2.new(1, 0.5)
-    toggle.AutoButtonColor = false
-    toggle.ZIndex = toggleFrame.ZIndex + 1
-    toggle.Parent = toggleFrame
-    
-    createRoundedCorners(toggle, 12)
-    
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = TH.St0
-    stroke.Transparency = 0.78
-    stroke.Thickness = 1
-    stroke.Parent = toggle
-    
-    local toggleCircle = Instance.new("Frame")
-    toggleCircle.Name = "Circle"
-    toggleCircle.BackgroundColor3 = TH.Txt
-    toggleCircle.Size = UDim2.new(0, 16, 0, 16)
-    toggleCircle.Position = default and UDim2.new(1, -10, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
-    toggleCircle.AnchorPoint = Vector2.new(default and 1 or 0, 0.5)
-    toggleCircle.ZIndex = toggle.ZIndex + 1
-    toggleCircle.Parent = toggle
-    
-    createRoundedCorners(toggleCircle, 8)
     
     local label = Instance.new("TextLabel")
     label.Name = "Label"
@@ -582,17 +611,48 @@ function LiquidGlass:CreateToggle(text, default, options)
     label.ZIndex = toggleFrame.ZIndex + 1
     label.Parent = toggleFrame
     
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Name = "ToggleButton"
+    toggleButton.Text = ""
+    toggleButton.BackgroundColor3 = default and TH.Ok0 or TH.Btn0
+    toggleButton.BackgroundTransparency = 0.08
+    toggleButton.Size = UDim2.new(0, 50, 0, 28)
+    toggleButton.Position = UDim2.new(1, -10, 0.5, -14)
+    toggleButton.AnchorPoint = Vector2.new(1, 0.5)
+    toggleButton.AutoButtonColor = false
+    toggleButton.ZIndex = toggleFrame.ZIndex + 1
+    toggleButton.Parent = toggleFrame
+    
+    createRoundedCorners(toggleButton, 14)
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = TH.St0
+    stroke.Transparency = 0.78
+    stroke.Thickness = 1
+    stroke.Parent = toggleButton
+    
+    local toggleCircle = Instance.new("Frame")
+    toggleCircle.Name = "Circle"
+    toggleCircle.BackgroundColor3 = TH.Txt
+    toggleCircle.Size = UDim2.new(0, 20, 0, 20)
+    toggleCircle.Position = default and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
+    toggleCircle.AnchorPoint = Vector2.new(default and 1 or 0, 0.5)
+    toggleCircle.ZIndex = toggleButton.ZIndex + 1
+    toggleCircle.Parent = toggleButton
+    
+    createRoundedCorners(toggleCircle, 10)
+    
     local state = default or false
     
     local function toggleState()
         state = not state
         
-        TweenService:Create(toggle, TweenInfo.new(0.15), {
+        TweenService:Create(toggleButton, TweenInfo.new(0.15), {
             BackgroundColor3 = state and TH.Ok0 or TH.Btn0
         }):Play()
         
         TweenService:Create(toggleCircle, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Position = state and UDim2.new(1, -10, 0.5, -8) or UDim2.new(0, 2, 0.5, -8),
+            Position = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10),
             AnchorPoint = state and Vector2.new(1, 0.5) or Vector2.new(0, 0.5)
         }):Play()
         
@@ -601,13 +661,12 @@ function LiquidGlass:CreateToggle(text, default, options)
         end
     end
     
-    addHoverEffect(toggle, toggle.BackgroundColor3, state and TH.Ok0 or TH.Btn1)
+    addHoverEffect(toggleButton, toggleButton.BackgroundColor3, state and TH.Ok1 or TH.Btn1)
     
-    toggle.MouseButton1Click:Connect(toggleState)
-    label.MouseButton1Click:Connect(toggleState)
+    toggleButton.MouseButton1Click:Connect(toggleState)
     
     return {
-        Toggle = toggle,
+        Toggle = toggleButton,
         Label = label,
         GetState = function() return state end,
         SetState = function(newState)
@@ -682,12 +741,6 @@ function LiquidGlass:CreateSlider(text, min, max, default, options)
     
     createRoundedCorners(fill, 3)
     
-    local fillStroke = Instance.new("UIStroke")
-    fillStroke.Color = TH.Accent
-    fillStroke.Transparency = 0.5
-    fillStroke.Thickness = 1
-    fillStroke.Parent = fill
-    
     local thumb = Instance.new("Frame")
     thumb.Name = "Thumb"
     thumb.BackgroundColor3 = TH.Txt
@@ -749,18 +802,6 @@ function LiquidGlass:CreateSlider(text, min, max, default, options)
         end
     end)
     
-    thumb.MouseEnter:Connect(function()
-        TweenService:Create(thumb, TweenInfo.new(0.12), {
-            Size = UDim2.new(0, 24, 0, 24)
-        }):Play()
-    end)
-    
-    thumb.MouseLeave:Connect(function()
-        TweenService:Create(thumb, TweenInfo.new(0.12), {
-            Size = UDim2.new(0, 20, 0, 20)
-        }):Play()
-    end)
-    
     setValue(default or min)
     
     return {
@@ -800,9 +841,9 @@ function LiquidGlass:CreateDropdown(text, optionsList, default, options)
     dropdown.Text = default or "Select..."
     dropdown.Font = Enum.Font.Gotham
     dropdown.TextSize = 14
-    dropdown.TextColor3 = TH.Mut
+    dropdown.TextColor3 = TH.Txt
     dropdown.BackgroundColor3 = TH.Btn0
-    dropdown.BackgroundTransparency = 0.06
+    dropdown.BackgroundTransparency = 0.08
     dropdown.Size = UDim2.new(1, 0, 0, 40)
     dropdown.Position = UDim2.new(0, 0, 0, 20)
     dropdown.AutoButtonColor = false
@@ -817,17 +858,6 @@ function LiquidGlass:CreateDropdown(text, optionsList, default, options)
     stroke.Transparency = 0.78
     stroke.Thickness = 1
     stroke.Parent = dropdown
-    
-    local arrow = Instance.new("ImageLabel")
-    arrow.Name = "Arrow"
-    arrow.Image = "rbxassetid://6031091004"
-    arrow.Size = UDim2.new(0, 20, 0, 20)
-    arrow.Position = UDim2.new(1, -30, 0.5, -10)
-    arrow.AnchorPoint = Vector2.new(1, 0.5)
-    arrow.BackgroundTransparency = 1
-    arrow.ImageColor3 = TH.Mut
-    arrow.ZIndex = dropdown.ZIndex + 1
-    arrow.Parent = dropdown
     
     local padding = Instance.new("UIPadding")
     padding.PaddingLeft = UDim.new(0, 14)
@@ -844,7 +874,7 @@ function LiquidGlass:CreateDropdown(text, optionsList, default, options)
             dropdownMenu = Instance.new("Frame")
             dropdownMenu.Name = "DropdownMenu"
             dropdownMenu.BackgroundColor3 = TH.Bg1
-            dropdownMenu.BackgroundTransparency = 0.06
+            dropdownMenu.BackgroundTransparency = 0.08
             dropdownMenu.Size = UDim2.new(1, 0, 0, 0)
             dropdownMenu.AutomaticSize = Enum.AutomaticSize.Y
             dropdownMenu.Position = UDim2.new(0, 0, 1, 4)
@@ -898,7 +928,6 @@ function LiquidGlass:CreateDropdown(text, optionsList, default, options)
                 
                 optionButton.MouseButton1Click:Connect(function()
                     dropdown.Text = option
-                    dropdown.TextColor3 = TH.Txt
                     dropdownOpen = false
                     
                     TweenService:Create(dropdownMenu, TweenInfo.new(0.16), {
@@ -949,136 +978,8 @@ function LiquidGlass:CreateDropdown(text, optionsList, default, options)
         end,
         SetSelected = function(text)
             dropdown.Text = text
-            dropdown.TextColor3 = TH.Txt
         end
     }
-end
-
-function LiquidGlass.Notify(options)
-    options = options or {}
-    
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "LiquidGlassNotification"
-    screenGui.IgnoreGuiInset = true
-    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-    screenGui.DisplayOrder = 999999
-    screenGui.Parent = game.CoreGui
-    
-    local dock = options.Dock or "BottomRight"
-    local position
-    
-    if dock == "TopRight" then
-        position = UDim2.new(1, -340, 0, 20)
-    elseif dock == "TopLeft" then
-        position = UDim2.new(0, 20, 0, 20)
-    elseif dock == "BottomLeft" then
-        position = UDim2.new(0, 20, 1, -120)
-    else
-        position = UDim2.new(1, -340, 1, -120)
-    end
-    
-    local notification = Instance.new("Frame")
-    notification.Name = "Notification"
-    notification.Size = UDim2.new(0, 320, 0, 0)
-    notification.Position = position
-    notification.BackgroundColor3 = TH.Bg1
-    notification.BackgroundTransparency = 0.65
-    notification.ZIndex = 100
-    notification.Parent = screenGui
-    
-    createRoundedCorners(notification, 20)
-    local glassEffects = addGlassEffect(notification)
-    
-    local content = Instance.new("Frame")
-    content.Name = "Content"
-    content.Size = UDim2.new(1, -24, 1, -24)
-    content.Position = UDim2.new(0, 12, 0, 12)
-    content.BackgroundTransparency = 1
-    content.ZIndex = notification.ZIndex + 1
-    content.Parent = notification
-    
-    local layout = Instance.new("UIListLayout")
-    layout.Padding = UDim.new(0, 10)
-    layout.SortOrder = Enum.SortOrder.LayoutOrder
-    layout.Parent = content
-    
-    local contentHeight = 24
-    
-    if options.Title then
-        local title = Instance.new("TextLabel")
-        title.Name = "Title"
-        title.Text = options.Title
-        title.Font = Enum.Font.GothamSemibold
-        title.TextSize = 18
-        title.TextColor3 = TH.Ttl
-        title.BackgroundTransparency = 1
-        title.Size = UDim2.new(1, 0, 0, 24)
-        title.TextXAlignment = Enum.TextXAlignment.Left
-        title.ZIndex = content.ZIndex + 1
-        title.Parent = content
-        contentHeight = contentHeight + 24
-    end
-    
-    if options.Description then
-        local desc = Instance.new("TextLabel")
-        desc.Name = "Description"
-        desc.Text = options.Description
-        desc.Font = Enum.Font.Gotham
-        desc.TextSize = 14
-        desc.TextColor3 = TH.Txt
-        desc.BackgroundTransparency = 1
-        desc.Size = UDim2.new(1, 0, 0, 0)
-        desc.AutomaticSize = Enum.AutomaticSize.Y
-        desc.TextWrapped = true
-        desc.TextXAlignment = Enum.TextXAlignment.Left
-        desc.ZIndex = content.ZIndex + 1
-        desc.Parent = content
-        
-        task.wait(0.05)
-        contentHeight = contentHeight + desc.AbsoluteSize.Y
-    end
-    
-    contentHeight = contentHeight + 48
-    
-    TweenService:Create(notification, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, 320, 0, contentHeight)
-    }):Play()
-    
-    local duration = options.Duration or 3
-    if duration > 0 then
-        task.delay(duration, function()
-            TweenService:Create(notification, TweenInfo.new(0.2), {
-                Size = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1
-            }):Play()
-            
-            task.delay(0.2, function()
-                screenGui:Destroy()
-            end)
-        end)
-    end
-    
-    return {
-        Notification = notification,
-        Close = function()
-            TweenService:Create(notification, TweenInfo.new(0.2), {
-                Size = UDim2.new(0, 0, 0, 0),
-                BackgroundTransparency = 1
-            }):Play()
-            
-            task.delay(0.2, function()
-                screenGui:Destroy()
-            end)
-        end
-    }
-end
-
-function LiquidGlass.QuickNotify(title, desc, duration)
-    return LiquidGlass.Notify({
-        Title = title,
-        Description = desc,
-        Duration = duration or 3
-    })
 end
 
 getgenv().LiquidGlass = LiquidGlass
