@@ -1,9 +1,11 @@
+-- LiquidGlass UI Library - Complete Version
 local LiquidGlass = {}
 LiquidGlass.__index = LiquidGlass
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
+-- Theme colors
 local TH = {
     Txt = Color3.fromRGB(235, 235, 235),
     Ttl = Color3.fromRGB(255, 255, 255),
@@ -676,4 +678,5 @@ function LiquidGlass.QuickNotify(title, desc, duration)
 end
 
 getgenv().LiquidGlass = LiquidGlass
+
 return LiquidGlass
