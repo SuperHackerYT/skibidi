@@ -68,7 +68,6 @@ local alimentos = {
     "Cooked Steak"
 }
 
-
 local ie = {
     "Bandage", "Bolt", "Broken Fan", "Broken Microwave", "Cake", "Apple", "Carrot", "Chair", "Coal", "Coin Stack",
     "Cooked Morsel", "Cooked Steak", "Fuel Canister", "Iron Body", "Leather Body", "Obsidiron Body", "Log", "MadKit", "Metal Chair",
@@ -1304,10 +1303,11 @@ Window:SelectTab(1)
 
 AboutSection = Tabs.Info:Section({ 
     Title = "About Voidex",
+    Opened = true,
 })
 
 AboutSection:Image({
-    Image = "https://chatgpt.com/backend-api/estuary/public_content/enc/eyJpZCI6Im1fNjk3MWRhODhjOTYwODE5MWIwNjFiM2VjYWYxN2M2ZjM6ZmlsZV8wMDAwMDAwMGM3NGM3MjA4OTQzODliYzM0NDk5MTczYSIsInRzIjoiMjA0NzUiLCJwIjoicHlpIiwiY2lkIjoiMSIsInNpZyI6IjE1ZjU4ZjIzMWQzOGRlYjVlMTRjOWNiYTk3MWY1ZjdjMDk0ZjJmYzcyMTk0MzNmZWI0N2QxZjA2OTJkMDgzMDEiLCJ2IjoiMCIsImdpem1vX2lkIjpudWxsLCJjcyI6bnVsbCwiY3AiOm51bGwsIm1hIjpudWxsfQ==",
+    Image = "https://cdn.discordapp.com/attachments/1416487323385987113/1464467267545858160/file_00000000c74c720894389bc34499173a_1.png?ex=697592ed&is=6974416d&hm=62016ee09d2aa298b10ac418ffe95f4405899ed88cabad0f261dcab44836f98e&",
     AspectRatio = "16:9",
     Radius = 9,
 })
