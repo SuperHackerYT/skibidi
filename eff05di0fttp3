@@ -78,24 +78,6 @@ local ie = {
 }
 local me = {"Bunny", "Wolf", "Alpha Wolf", "Bear", "Crossbow Cultist", "Alien", "Alien Elite", "Polar Bear", "Arctic Fox", "Meteor Crab", "Mammoth", "Cultist", "Cultist Melee", "Cultist Crossbow", "Cultist Juggernaut"}
 
-
-local BlueprintItems = {"Crafting Blueprint", "Defense Blueprint", "Furniture Blueprint"}
-local selectedBlueprintItems = {}
-local PeltsItems = {"Bunny Foot", "Wolf Pelt", "Alpha Wolf Pelt", "Bear Pelt", "Arctic Fox Pelt", "Polar Bear Pelt"}
-local selectedPeltsItems = {}
-local junkItems = {"Bolt", "Sheet Metal", "UFO Junk", "UFO Component", "Broken Fan", "Old Radio", "Broken Microwave", "Tyre", "Metal Chair", "Old Car Engine", "Washing Machine", "Cultist Experiment", "Cultist Prototype", "Meteor Shard", "Gold Shard", "UFO Scrap", "Cultist Gem", "Gem of the Forest Fragment", "Feather", "Old Boot"}
-local selectedJunkItems = {}
-local fuelItems = {"Log", "Chair", "Coal", "Fuel Canister", "Oil Barrel"}
-local selectedFuelItems = {}
-local foodItems = {"Cake", "Cooked Steak", "Cooked Morsel", "Ribs", "Salmon", "Cooked Salmon", "Cooked Ribs", "Mackerel", "Cooked Mackerel", "Steak", "Morsel", "Berry", "Apple", "Carrot", "Chilli", "Stew", "Hearty Stew", "Corn", "Pumpkin", "Meat? Sandwich", "Pumpkin", "Seafood Chowder", "Steak Dinner", "Pumpkin Soup", "BBQ Ribs", "Carrot Cake", "Jar of Jelly", "Mackerel", "Salmon", "Clownfish", "Swordfish", "Jellyfish", "Char", "Eel", "Shark", "Cooked Clownfish", "Cooked Swordfish", "Cooked Jellyfish", "Cooked Char", "Cooked Eel", "Cooked Shark"}
-local selectedFoodItems = {}
-local medicalItems = {"Bandage", "MedKit"}
-local selectedMedicalItems = {}
-local cultistItems = {"Cultist", "Crossbow Cultist", "Cultist Juggernaut", "Bunny", "Wolf", "Alpha Wolf", "Bear", "Snow Bear", "Deer", "Owl", "Ram"}
-local selectedCultistItems = {}
-local equipmentItems = {"Revolver", "Rifle", "Revolver Ammo", "Rifle Ammo", "Infernal Sack", "Giant Sack", "Good Sack", "Strong Axe", "Good Axe", "Frozen Shuriken", "Tactical Shotgun", "Crossbow", "Infernal Crossbow", "Snowball", "Kunai", "Leather Body", "Poison Armour", "Iron Body", "Thorn Body", "Obsidiron Body", "Cultist Staff", "Riot Shield", "Alien Armour", "Axe Trim Kit", "Armour Trim Kit", "Red Key", "Blue Key", "Yellow Key", "Grey Key", "Frog Key", "Chili Seeds", "Flower Seeds", "Berry Seeds", "Firefly Seeds", "Old Rod", "Good Rod", "Strong Rod"}
-local selectedEquipmentItems = {}
-
 local craftableItems = {
     "Map", "Old Bed", "Bunny Trap", "Sun Dial",
     "Regular Bed", "Compass", "Freezer", "Farm Plot", "Wood Rain Storage",
@@ -2201,367 +2183,642 @@ Tabs.br:Button({
     end
 })
 
-Tabs.br:Section({ Title = "Blue Print", Icon = "hammer" })
+-- NEW
 
-Tabs.br:Dropdown({
-    Title = "Select Blue Print Items",
-    Desc = "Choose items to bring",
-    Values = selectedBlueprintItems,
-    Multi = true,
-    AllowNone = true,
-    Callback = function(options)
-        selectedBlueprintItems = options
-    end
-})
+local BringSettings = {
+    BringPos = {
+        "You", "Campfire", "Crafting Bench"
+    },
+    BringMethod = {
+        "Slow", "Normal", "Fast"
+    },
+    SelectedBringMethod = "Normal",
+    SelectedBringPos = "You"
+}
 
-Tabs.br:Toggle({
-    Title = "Bring Blue Print Items",
-    Default = false,
-    Callback = function(value)
-        BlueprintToggleEnabled = value
-        
-        if value then
-            if #selectedBlueprintItems > 0 then
-                BlueprintLoopRunning = true
-                spawn(function()
-                    while BlueprintLoopRunning and BlueprintToggleEnabled do
-                        if #selectedBlueprintItems > 0 and BlueprintToggleEnabled then
-                            bypassBringSystem(selectedBlueprintItems, function() return BlueprintToggleEnabled end)
-                        end
-                        
-                        local waitTime = 0
-                        while waitTime < 3 and BlueprintToggleEnabled and BlueprintLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
+local BringFuelSettings = {
+    fuelItems = {
+        "Log", "Chair", "Coal", "Fuel Canister", "Oil Barrel"
+    },
+    FuelToBring = {}
+}
+
+function BringFuel()
+    for _, v in pairs(workspace.Items:GetChildren()) do
+        for _, item in ipairs(BringFuelSettings.FuelToBring) do
+            if v.Name == item then
+                local targetCFrame
+                local waitTime = 0.03
+
+                if BringSettings.SelectedBringMethod == "Slow" then
+                    waitTime = 0.15
+                elseif BringSettings.SelectedBringMethod == "Normal" then
+                    waitTime = 0.01
+                elseif BringSettings.SelectedBringMethod == "Fast" then
+                    waitTime = 0.008
+                end
+
+                if BringSettings.SelectedBringPos == "You" then
+                    targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 20, 0))
+                elseif BringSettings.SelectedBringPos == "Campfire" then
+                    targetCFrame = CFrame.new(0, 20, 0)
+                elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                    local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                    if benchPart then
+                        targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
                     end
-                    BlueprintLoopRunning = false
-                end)
-            else
-                BlueprintToggleEnabled = false
+                end
+
+                if targetCFrame then
+                    pcall(function()
+                        Drag(v)
+                        wait(waitTime)
+                        local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                        if vPart then
+                            vPart.CFrame = targetCFrame
+                        end
+                        wait(waitTime)
+                        Undrag(v)
+                    end)
+                end
             end
-        else
-            BlueprintLoopRunning = false
         end
     end
-})
+end
 
-Tabs.br:Section({ Title = "Pelts", Icon = "shirt" })
+local BringAllSet = {
+    FuelItems = {
+        "Log", "Chair", "Coal", "Fuel Canister", "Oil Barrel"
+    },
+    JunkItems = {
+        "Bolt", "Sheet Metal", "Broken Fan", "Old Radio", "Broken Microwave", "Tyre", "Old Car Engine", "Washing Machine", "Cultist Experiment", "Cultist Prototype", "Meteor Shard", "Gold Shard", "UFO Scrap", "Cultist Gem", "Gem of the Forest Fragment", "Feather", "Old Boot"
+    },
+    FoodItems = {
+        "Pumpkin", "Cake", "Cooked Steak", "Cooked Morsel", "Ribs", "Salmon", "Cooked Salmon", "Cooked Ribs", "Mackerel", "Cooked Mackerel", "Steak", "Morsel", "Berry", "Apple", "Carrot", "Chilli", "Stew", "Hearty Stew", "Corn", "Pumpkin", "Meat? Sandwich", "Pumpkin", "Seafood Chowder", "Steak Dinner", "Pumpkin Soup", "BBQ Ribs", "Carrot Cake", "Jar of Jelly", "Mackerel", "Salmon", "Clownfish", "Swordfish", "Jellyfish", "Char", "Eel", "Shark", "Cooked Clownfish", "Cooked Swordfish", "Cooked Jellyfish", "Cooked Char", "Cooked Eel", "Cooked Shark"
+    }
+}
 
-Tabs.br:Dropdown({
-    Title = "Select Pelts Items",
-    Values = PeltsItems,
-    Multi = true,
-    AllowNone = true,
-    Callback = function(options)
-        selectedPeltsItems = options
-    end
-})
-
-Tabs.br:Toggle({
-    Title = "Bring Pelts Items",
-    Default = false,
-    Callback = function(value)
-        PeltsToggleEnabled = value
+function BringAll()
+    for _, v in pairs(workspace.Items:GetChildren()) do
+        local shouldBring = false
         
-        if value then
-            if #selectedPeltsItems > 0 then
-                PeltsLoopRunning = true
-                spawn(function()
-                    while PeltsLoopRunning and PeltsToggleEnabled do
-                        if #selectedPeltsItems > 0 and PeltsToggleEnabled then
-                            bypassBringSystem(selectedPeltsItems, function() return PeltsToggleEnabled end)
-                        end
-                        
-                        local waitTime = 0
-                        while waitTime < 3 and PeltsToggleEnabled and PeltsLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
-                    end
-                    PeltsLoopRunning = false
-                end)
-            else
-                PeltsToggleEnabled = false
+        for _, category in pairs(BringAllSet) do
+            for _, item in ipairs(category) do
+                if v.Name == item then
+                    shouldBring = true
+                    break
+                end
             end
-        else
-            PeltsLoopRunning = false
+            if shouldBring then break end
+        end
+        
+        if shouldBring then
+            local targetCFrame
+            local waitTime = 0.03
+
+            if BringSettings.SelectedBringMethod == "Slow" then
+                waitTime = 0.15
+            elseif BringSettings.SelectedBringMethod == "Normal" then
+                waitTime = 0.03
+            elseif BringSettings.SelectedBringMethod == "Fast" then
+                waitTime = 0.003
+            end
+
+            if BringSettings.SelectedBringPos == "You" then
+                targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 20, 0))
+            elseif BringSettings.SelectedBringPos == "Campfire" then
+                targetCFrame = CFrame.new(0, 20, 0)
+            elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                if benchPart then
+                    targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
+                end
+            end
+
+            if targetCFrame then
+                pcall(function()
+                    Drag(v)
+                    wait(waitTime)
+                    local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                    if vPart then
+                        vPart.CFrame = targetCFrame
+                    end
+                    wait(waitTime)
+                    Undrag(v)
+                end)
+            end
         end
     end
-})
+end
 
-Tabs.br:Section({ Title = "Junk", Icon = "box" })
+-- Bring Settings Section
+Tabs.br:Section({ 
+    Title = "Bring Settings",
+})
 
 Tabs.br:Dropdown({
-    Title = "Select Junk Items",
-    Desc = "Choose items to bring",
-    Values = junkItems,
-    Multi = true,
-    AllowNone = true,
-    Callback = function(options)
-        selectedJunkItems = options
+    Title = "Bring Position",
+    Desc = "Select where to bring items",
+    Values = BringSettings.BringPos,
+    Value = BringSettings.SelectedBringPos,
+    Callback = function(option)
+        BringSettings.SelectedBringPos = option
     end
 })
-
-Tabs.br:Toggle({
-    Title = "Bring Junk Items",
-    Default = false,
-    Callback = function(value)
-        junkToggleEnabled = value
-        
-        if value then
-            if #selectedJunkItems > 0 then
-                junkLoopRunning = true
-                spawn(function()
-                    while junkLoopRunning and junkToggleEnabled do
-                        if #selectedJunkItems > 0 and junkToggleEnabled then
-                            bypassBringSystem(selectedJunkItems, function() return junkToggleEnabled end)
-                        end
-                        
-                        local waitTime = 0
-                        while waitTime < 3 and junkToggleEnabled and junkLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
-                    end
-                    junkLoopRunning = false
-                end)
-            else
-                junkToggleEnabled = false
-            end
-        else
-            junkLoopRunning = false
-        end
-    end
-})
-
-Tabs.br:Section({ Title = "Fuel", Icon = "flame" })
 
 Tabs.br:Dropdown({
-    Title = "Select Fuel Items",
-    Desc = "Choose items to bring",
-    Values = fuelItems,
-    Multi = true,
-    AllowNone = true,
-    Callback = function(options)
-        selectedFuelItems = options
+    Title = "Bring Method",
+    Desc = "Select bring speed",
+    Values = BringSettings.BringMethod,
+    Value = BringSettings.SelectedBringMethod,
+    Callback = function(option)
+        BringSettings.SelectedBringMethod = option
     end
 })
 
-Tabs.br:Toggle({
+Tabs.br:Section({ 
+    Title = "All Items",
+})
+
+Tabs.br:Button({
+    Title = "Bring All Items",
+    Desc = "Bring all fuel, scrap, and food items",
+    Locked = false,
+    Callback = function()
+        BringAll()
+    end
+})
+
+Tabs.br:Section({ 
+    Title = "Fuel Items",
+})
+
+Tabs.br:Dropdown({
+    Title = "Select Fuel",
+    Desc = "Choose fuel items to bring",
+    Values = BringFuelSettings.fuelItems,
+    Value = BringFuelSettings.FuelToBring,
+    Multi = true,
+    AllowNone = true,
+    Callback = function(option)
+        BringFuelSettings.FuelToBring = option
+    end
+})
+
+Tabs.br:Button({
     Title = "Bring Fuel Items",
-    Default = false,
-    Callback = function(value)
-        fuelToggleEnabled = value
-        
-        if value then
-            if #selectedFuelItems > 0 then
-                fuelLoopRunning = true
-                spawn(function()
-                    while fuelLoopRunning and fuelToggleEnabled do
-                        if #selectedFuelItems > 0 and fuelToggleEnabled then
-                            bypassBringSystem(selectedFuelItems, function() return fuelToggleEnabled end)
-                        end
-                        
-                        local waitTime = 0
-                        while waitTime < 3 and fuelToggleEnabled and fuelLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
+    Desc = "Bring selected fuel items",
+    Locked = false,
+    Callback = function()
+        BringFuel()
+    end
+})
+
+local BringScrapSettings = {
+    junkItems = {
+        "Bolt", "Sheet Metal", "Broken Fan", "Old Radio", "Broken Microwave", "Tyre", "Old Car Engine", "Washing Machine", "Cultist Experiment", "Cultist Prototype", "Meteor Shard", "Gold Shard", "UFO Scrap", "Cultist Gem", "Gem of the Forest Fragment", "Feather", "Old Boot"
+    },
+    ScrapToBring = {}
+}
+
+function BringScrap()
+    for _, v in pairs(workspace.Items:GetChildren()) do
+        for _, item in ipairs(BringScrapSettings.ScrapToBring) do
+            if v.Name == item then
+                local targetCFrame
+                local waitTime = 0.03
+
+                if BringSettings.SelectedBringMethod == "Slow" then
+                    waitTime = 0.15
+                elseif BringSettings.SelectedBringMethod == "Normal" then
+                    waitTime = 0.03
+                elseif BringSettings.SelectedBringMethod == "Fast" then
+                    waitTime = 0.003
+                end
+
+                if BringSettings.SelectedBringPos == "You" then
+                    targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 20, 0))
+                elseif BringSettings.SelectedBringPos == "Campfire" then
+                    targetCFrame = CFrame.new(0, 20, 0)
+                elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                    local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                    if benchPart then
+                        targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
                     end
-                    fuelLoopRunning = false
-                end)
-            else
-                fuelToggleEnabled = false
+                end
+
+                if targetCFrame then
+                    pcall(function()
+                        Drag(v)
+                        wait(waitTime)
+                        local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                        if vPart then
+                            vPart.CFrame = targetCFrame
+                        end
+                        wait(waitTime)
+                        Undrag(v)
+                    end)
+                end
             end
-        else
-            fuelLoopRunning = false
         end
     end
+end
+
+Tabs.br:Section({ 
+    Title = "Scrap Items",
 })
 
-Tabs.br:Section({ Title = "Food", Icon = "utensils" })
-
 Tabs.br:Dropdown({
-    Title = "Select Food Items",
-    Desc = "Choose items to bring",
-    Values = foodItems,
+    Title = "Select Scrap",
+    Desc = "Choose scrap items to bring",
+    Values = BringScrapSettings.junkItems,
+    Value = BringScrapSettings.ScrapToBring,
     Multi = true,
     AllowNone = true,
-    Callback = function(options)
-        selectedFoodItems = options
+    Callback = function(option)
+        BringScrapSettings.ScrapToBring = option
     end
 })
 
-Tabs.br:Toggle({
-    Title = "Bring Food items",
-    Default = false,
-    Callback = function(value)
-        foodToggleEnabled = value
-        
-        if value then
-            if #selectedFoodItems > 0 then
-                foodLoopRunning = true
-                spawn(function()
-                    while foodLoopRunning and foodToggleEnabled do
-                        if #selectedFoodItems > 0 and foodToggleEnabled then
-                            bypassBringSystem(selectedFoodItems, function() return foodToggleEnabled end)
-                        end
-                        
+Tabs.br:Button({
+    Title = "Bring Scrap Items",
+    Desc = "Bring selected scrap items",
+    Locked = false,
+    Callback = function()
+        BringScrap()
+    end
+})
 
-                        local waitTime = 0
-                        while waitTime < 3 and foodToggleEnabled and foodLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
+local BringFoodSettings = {
+    foodItems = {
+        "Pumpkin", "Cake", "Cooked Steak", "Cooked Morsel", "Ribs", "Salmon", "Cooked Salmon", "Cooked Ribs", "Mackerel", "Cooked Mackerel", "Steak", "Morsel", "Berry", "Apple", "Carrot", "Chilli", "Stew", "Hearty Stew", "Corn", "Pumpkin", "Meat? Sandwich", "Pumpkin", "Seafood Chowder", "Steak Dinner", "Pumpkin Soup", "BBQ Ribs", "Carrot Cake", "Jar of Jelly", "Mackerel", "Salmon", "Clownfish", "Swordfish", "Jellyfish", "Char", "Eel", "Shark", "Cooked Clownfish", "Cooked Swordfish", "Cooked Jellyfish", "Cooked Char", "Cooked Eel", "Cooked Shark"
+    },
+    FoodToBring = {}
+}
+
+function BringFood()
+    for _, v in pairs(workspace.Items:GetChildren()) do
+        for _, item in ipairs(BringFoodSettings.FoodToBring) do
+            if v.Name == item then
+                local targetCFrame
+                local waitTime = 0.03
+
+                if BringSettings.SelectedBringMethod == "Slow" then
+                    waitTime = 0.15
+                elseif BringSettings.SelectedBringMethod == "Normal" then
+                    waitTime = 0.03
+                elseif BringSettings.SelectedBringMethod == "Fast" then
+                    waitTime = 0.003
+                end
+
+                if BringSettings.SelectedBringPos == "You" then
+                    targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 20, 0))
+                elseif BringSettings.SelectedBringPos == "Campfire" then
+                    targetCFrame = CFrame.new(0, 20, 0)
+                elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                    local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                    if benchPart then
+                        targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
                     end
-                    foodLoopRunning = false                 
-                end)
-            else                
-                foodToggleEnabled = false
+                end
+
+                if targetCFrame then
+                    pcall(function()
+                        Drag(v)
+                        wait(waitTime)
+                        local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                        if vPart then
+                            vPart.CFrame = targetCFrame
+                        end
+                        wait(waitTime)
+                        Undrag(v)
+                    end)
+                end
             end
-        else
-            foodLoopRunning = false          
         end
     end
+end
+
+Tabs.br:Section({ 
+    Title = "Food Items",
 })
 
-Tabs.br:Section({ Title = "Medicine", Icon = "bandage" })
-
 Tabs.br:Dropdown({
-    Title = "Select Medical Items",
-    Desc = "Choose items to bring",
-    Values = medicalItems,
+    Title = "Select Foods",
+    Desc = "Choose food items to bring",
+    Values = BringFoodSettings.foodItems,
+    Value = BringFoodSettings.FoodToBring,
     Multi = true,
     AllowNone = true,
-    Callback = function(options)
-        selectedMedicalItems = options
+    Callback = function(option)
+        BringFoodSettings.FoodToBring = option
     end
 })
 
-Tabs.br:Toggle({
+Tabs.br:Button({
+    Title = "Bring Food Items",
+    Desc = "Bring selected food items",
+    Locked = false,
+    Callback = function()
+        BringFood()
+    end
+})
+
+local BringHealingSettings = {
+    MedicalItems = {"Bandage", "MedKit"},
+    MedicalItemsToBring = {}
+}
+
+function BringHealingItems()
+    for _, v in pairs(workspace.Items:GetChildren()) do
+        for _, item in ipairs(BringHealingSettings.MedicalItemsToBring) do
+            if v.Name == item then
+                local targetCFrame
+                local waitTime = 0.03
+
+                if BringSettings.SelectedBringMethod == "Slow" then
+                    waitTime = 0.15
+                elseif BringSettings.SelectedBringMethod == "Normal" then
+                    waitTime = 0.03
+                elseif BringSettings.SelectedBringMethod == "Fast" then
+                    waitTime = 0.003
+                end
+
+                if BringSettings.SelectedBringPos == "You" then
+                    targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Ve)
+                elseif BringSettings.SelectedBringPos == "Campfire" then
+                    targetCFrame = CFrame.new(0, 20, 0)
+                elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                    local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                    if benchPart then
+                        targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
+                    end
+                end
+
+                if targetCFrame then
+                    pcall(function()
+                        Drag(v)
+                        wait(waitTime)
+                        local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                        if vPart then
+                            vPart.CFrame = targetCFrame
+                        end
+                        wait(waitTime)
+                        Undrag(v)
+                    end)
+                end
+            end
+        end
+    end
+end
+
+Tabs.br:Section({ 
+    Title = "Medical Items",
+})
+
+Tabs.br:Dropdown({
+    Title = "Select Medical",
+    Desc = "Choose medical items to bring",
+    Values = BringHealingSettings.MedicalItems,
+    Value = BringHealingSettings.MedicalItemsToBring,
+    Multi = true,
+    AllowNone = true,
+    Callback = function(option)
+        BringHealingSettings.MedicalItemsToBring = option
+    end
+})
+
+Tabs.br:Button({
     Title = "Bring Medical Items",
-    Default = false,
-    Callback = function(value)
-        medicalToggleEnabled = value
-        
-        if value then
-            if #selectedMedicalItems > 0 then
-                medicalLoopRunning = true
-                spawn(function()
-                    while medicalLoopRunning and medicalToggleEnabled do
-                        if #selectedMedicalItems > 0 and medicalToggleEnabled then
-                            bypassBringSystem(selectedMedicalItems, function() return medicalToggleEnabled end)
-                        end
-                        
-
-                        local waitTime = 0
-                        while waitTime < 3 and medicalToggleEnabled and medicalLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
-                    end
-                    medicalLoopRunning = false
-                end)
-            else
-                medicalToggleEnabled = false
-            end
-        else
-            medicalLoopRunning = false
-        end
+    Desc = "Bring selected medical items",
+    Locked = false,
+    Callback = function()
+        BringHealingItems()
     end
 })
 
-Tabs.br:Section({ Title = "Mobs", Icon = "bow-arrow" })
+local BringGearSettings = {
+    GearItems = {"Revolver", "Rifle", "Revolver Ammo", "Rifle Ammo", "Infernal Sack", "Giant Sack", "Good Sack", "Strong Axe", "Good Axe", "Frozen Shuriken", "Tactical Shotgun", "Crossbow", "Infernal Crossbow", "Snowball", "Kunai", "Leather Body", "Poison Armour", "Iron Body", "Thorn Body", "Obsidiron Body", "Cultist Staff", "Riot Shield", "Alien Armour", "Axe Trim Kit", "Armour Trim Kit", "Old Rod", "Good Rod", "Strong Rod"},
+    GearToBring = {}
+}
+
+function BringGearItems()
+    for _, v in pairs(workspace.Items:GetChildren()) do
+        for _, item in ipairs(BringGearSettings.GearToBring) do
+            if v.Name == item then
+                local targetCFrame
+                local waitTime = 0.03
+
+                if BringSettings.SelectedBringMethod == "Slow" then
+                    waitTime = 0.15
+                elseif BringSettings.SelectedBringMethod == "Normal" then
+                    waitTime = 0.03
+                elseif BringSettings.SelectedBringMethod == "Fast" then
+                    waitTime = 0.003
+                end
+
+                if BringSettings.SelectedBringPos == "You" then
+                    targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Ve)
+                elseif BringSettings.SelectedBringPos == "Campfire" then
+                    targetCFrame = CFrame.new(0, 20, 0)
+                elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                    local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                    if benchPart then
+                        targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
+                    end
+                end
+
+                if targetCFrame then
+                    pcall(function()
+                        Drag(v)
+                        wait(waitTime)
+                        local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                        if vPart then
+                            vPart.CFrame = targetCFrame
+                        end
+                        wait(waitTime)
+                        Undrag(v)
+                    end)
+                end
+            end
+        end
+    end
+end
+
+Tabs.br:Section({ 
+    Title = "Gear Items",
+})
 
 Tabs.br:Dropdown({
-    Title = "Select Mobs to bring",
-    Values = cultistItems,
+    Title = "Select Gear",
+    Desc = "Choose gear items to bring",
+    Values = BringGearSettings.GearItems,
+    Value = BringGearSettings.GearToBring,
     Multi = true,
     AllowNone = true,
-    Callback = function(options)
-        selectedCultistItems = options
+    Callback = function(option)
+        BringGearSettings.GearToBring = option
     end
 })
 
-Tabs.br:Toggle({
-    Title = "Bring Mob",
-    Default = false,
-    Callback = function(value)
-        cultistToggleEnabled = value
-        
-        if value then
-            if #selectedCultistItems > 0 then
-                cultistLoopRunning = true
-                spawn(function()
-                    while cultistLoopRunning and cultistToggleEnabled do
-                        if #selectedCultistItems > 0 and cultistToggleEnabled then
-                            bypassBringSystem(selectedCultistItems, function() return cultistToggleEnabled end)
-                        end
-                        
+Tabs.br:Button({
+    Title = "Bring Gear Items",
+    Desc = "Bring selected gear items",
+    Locked = false,
+    Callback = function()
+        BringGearItems()
+    end
+})
 
-                        local waitTime = 0
-                        while waitTime < 3 and cultistToggleEnabled and cultistLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
+local BringOthersSettings = {
+    OthersItems = {"Red Key", "Blue Key", "Yellow Key", "Grey Key", "Chili Seeds", "Flower Seeds", "Berry Seeds", " FireFly Seeds"},
+    OthersToBring = {}
+}
+
+function BringOthersItems()
+    for _, v in pairs(workspace.Items:GetChildren()) do
+        for _, item in ipairs(BringOthersSettings.OthersToBring) do
+            if v.Name == item then
+                local targetCFrame
+                local waitTime = 0.03
+
+                if BringSettings.SelectedBringMethod == "Slow" then
+                    waitTime = 0.15
+                elseif BringSettings.SelectedBringMethod == "Normal" then
+                    waitTime = 0.03
+                elseif BringSettings.SelectedBringMethod == "Fast" then
+                    waitTime = 0.003
+                end
+
+                if BringSettings.SelectedBringPos == "You" then
+                    targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Ve)
+                elseif BringSettings.SelectedBringPos == "Campfire" then
+                    targetCFrame = CFrame.new(0, 20, 0)
+                elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                    local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                    if benchPart then
+                        targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
                     end
-                    cultistLoopRunning = false
-                end)
-            else
-                cultistToggleEnabled = false
+                end
+
+                if targetCFrame then
+                    pcall(function()
+                        Drag(v)
+                        wait(waitTime)
+                        local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                        if vPart then
+                            vPart.CFrame = targetCFrame
+                        end
+                        wait(waitTime)
+                        Undrag(v)
+                    end)
+                end
             end
-        else
-            cultistLoopRunning = false
         end
     end
-})
+end
 
-Tabs.br:Section({ Title = "Equipment", Icon = "sword" })
+Tabs.br:Section({ 
+    Title = "Others Items",
+})
 
 Tabs.br:Dropdown({
-    Title = "Select Equipment Items",
-    Desc = "Choose items to bring",
-    Values = equipmentItems,
+    Title = "Select Others",
+    Desc = "Choose other items to bring",
+    Values = BringOthersSettings.OthersItems,
+    Value = BringOthersSettings.OthersToBring,
     Multi = true,
     AllowNone = true,
-    Callback = function(options)
-        selectedEquipmentItems = options
+    Callback = function(option)
+        BringOthersSettings.OthersToBring = option
     end
 })
 
-Tabs.br:Toggle({
-    Title = "Bring Equipment Items",
-    Default = false,
-    Callback = function(value)
-        equipmentToggleEnabled = value
-        
-        if value then
-            if #selectedEquipmentItems > 0 then
-                equipmentLoopRunning = true
-                spawn(function()
-                    while equipmentLoopRunning and equipmentToggleEnabled do
-                        if #selectedEquipmentItems > 0 and equipmentToggleEnabled then
-                            bypassBringSystem(selectedEquipmentItems, function() return equipmentToggleEnabled end)
-                        end
-                        
+Tabs.br:Button({
+    Title = "Bring Other Items",
+    Desc = "Bring selected other items",
+    Locked = false,
+    Callback = function()
+        BringOthersItems()
+    end
+})
 
-                        local waitTime = 0
-                        while waitTime < 3 and equipmentToggleEnabled and equipmentLoopRunning do
-                            wait(0.1)
-                            waitTime = waitTime + 0.1
-                        end
+local BringMobSettings = {
+    cultistItems = {
+        "Cultist", "Crossbow Cultist", "Cultist Juggernaut", "Bunny", "Wolf", "Alpha Wolf", "Bear", "Snow Bear", "Deer", "Owl"
+    },
+    MobToBring = {}
+}
+
+function BringMob()
+    for _, v in pairs(workspace.Characters:GetChildren()) do
+        for _, item in ipairs(BringMobSettings.MobToBring) do
+            if v.Name == item then
+                local targetCFrame
+                local waitTime = 0.03
+
+                if BringSettings.SelectedBringMethod == "Slow" then
+                    waitTime = 0.15
+                elseif BringSettings.SelectedBringMethod == "Normal" then
+                    waitTime = 0.03
+                elseif BringSettings.SelectedBringMethod == "Fast" then
+                    waitTime = 0.003
+                end
+
+                if BringSettings.SelectedBringPos == "You" then
+                    targetCFrame = CFrame.new(game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Ve)
+                elseif BringSettings.SelectedBringPos == "Campfire" then
+                    targetCFrame = CFrame.new(0, 20, 0)
+                elseif BringSettings.SelectedBringPos == "Crafting Bench" then
+                    local benchPart = workspace.Map.Campground.CraftingBench.PrimaryPart or workspace.Map.Campground.CraftingBench:FindFirstChildWhichIsA("BasePart")
+                    if benchPart then
+                        targetCFrame = benchPart.CFrame + Vector3.new(0, 20, 0)
                     end
-                    equipmentLoopRunning = false
-                end)
-            else
-                equipmentToggleEnabled = false
+                end
+
+                if targetCFrame then
+                    pcall(function()
+                        Drag(v)
+                        wait(waitTime)
+                        local vPart = v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart")
+                        if vPart then
+                            vPart.CFrame = targetCFrame
+                        end
+                        wait(waitTime)
+                        Undrag(v)
+                    end)
+                end
             end
-        else
-            equipmentLoopRunning = false
         end
     end
+end
+
+Tabs.br:Section({ 
+    Title = "Mobs",
 })
+
+Tabs.br:Dropdown({
+    Title = "Select Mob",
+    Desc = "Choose mobs to bring",
+    Values = BringMobSettings.cultistItems,
+    Value = BringMobSettings.MobToBring,
+    Multi = true,
+    AllowNone = true,
+    Callback = function(option)
+        BringMobSettings.MobToBring = option
+    end
+})
+
+Tabs.br:Button({
+    Title = "Bring Mobs",
+    Desc = "Bring selected mobs",
+    Locked = false,
+    Callback = function()
+        BringMob()
+    end
+})
+
+-- NED
 
 Tabs.br:Section({ Title = "Sapling", Icon = "sprout" })
 
